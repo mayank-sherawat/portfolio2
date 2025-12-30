@@ -69,6 +69,7 @@ interface Project {
   desc: string;
   points: string[];
   link: string;
+  images?: string[];
 }
 
 interface EducationItem {
@@ -155,7 +156,14 @@ const PROJECTS: Project[] = [
       "Developed a structured backend using Prisma ORM with strong relational mapping between Users and Photos.",
       "Added real-time UI updates after photo uploads and profile picture changes using client-side state syncing."
     ],
-    link: "#"
+    // ADD YOUR IMAGE PATHS HERE
+    link: "https://social-house-psi.vercel.app/auth",
+    images: [
+      "/projects/sh.png",
+      "/projects/sh1.png",
+      "/projects/sh2.png",
+      "/projects/sh3.jpg",
+    ]
   },
   {
     title: "Task Manager",
@@ -167,7 +175,11 @@ const PROJECTS: Project[] = [
       "Enhanced frontend performance using React Hooks.",
       "Designed fully responsive interface ensuring seamless usability."
     ],
-    link: "#"
+    link: "",
+    images: [
+      "/projects/task1.jpg",
+      "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?q=80&w=1000&auto=format&fit=crop" // Placeholder
+    ]
   },
   {
     title: "DriveVault",
@@ -179,7 +191,11 @@ const PROJECTS: Project[] = [
       "Improved backend efficiency using optimized MongoDB queries.",
       "Reduced bugs by 60% through enhanced error handling and automated restarts."
     ],
-    link: "#"
+    link: "",
+    images: [
+      "/projects/drive1.jpg",
+      "https://images.unsplash.com/photo-1544197150-b99a580bbcbf?q=80&w=1000&auto=format&fit=crop" // Placeholder
+    ]
   }
 ];
 
@@ -251,8 +267,8 @@ const Reveal = ({ children, className = "", delay = 0 }: { children: React.React
     <div
       ref={ref}
       className={`${className} transition-all duration-1000 ease-[cubic-bezier(0.17,0.55,0.55,1)] transform ${isVisible
-          ? 'opacity-100 translate-y-0 filter blur-0'
-          : 'opacity-0 translate-y-12 filter blur-sm'
+        ? 'opacity-100 translate-y-0 filter blur-0'
+        : 'opacity-0 translate-y-12 filter blur-sm'
         }`}
       style={{ transitionDelay: `${delay}ms` }}
     >
@@ -397,7 +413,6 @@ const TiltCard = ({ children, className = "" }: { children: React.ReactNode; cla
     </div>
   );
 };
-
 // 6. Footer
 const Footer = () => {
   const [time, setTime] = useState("");
@@ -675,15 +690,24 @@ export default function Portfolio() {
           <div className="space-y-16 md:space-y-32">
             {PROJECTS.map((project, idx) => (
               <Reveal key={idx} className="group cursor-default">
-                <div className="w-full h-[30vh] md:h-[60vh] bg-neutral-100 mb-6 md:mb-8 overflow-hidden relative shadow-lg">
-                  {/* Abstract Gradient Placeholder for Project Image */}
-                  <div className={`w-full h-full bg-LINEAR-to-br ${idx === 0 ? 'from-neutral-200 to-neutral-400' : idx === 1 ? 'from-neutral-300 to-neutral-500' : 'from-neutral-200 to-neutral-300'} group-hover:scale-105 transition-transform duration-1000 ease-[cubic-bezier(0.19,1,0.22,1)]`}></div>
-                </div>
+
                 <div className="flex flex-col md:flex-row justify-between items-start border-t border-black/10 pt-4 md:pt-6">
                   <div className="max-w-2xl w-full">
-                    <div className="flex justify-between items-center md:block">
-                      <h3 className="text-2xl md:text-4xl font-bold mb-2">{project.title}</h3>
-                      
+                    <div className="flex flex-wrap items-baseline gap-3 mb-2">
+                      <h3 className="text-2xl md:text-4xl font-bold">{project.title}</h3>
+
+                      {/* Live Link with Arrow */}
+                      {project.link && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm md:text-base font-medium text-neutral-500 hover:text-black transition-colors flex items-center gap-1 group/link translate-y--2px"
+                        >
+                          Live Link
+                          <ArrowUpRight size={16} className="group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5 transition-transform" />
+                        </a>
+                      )}
                     </div>
                     {/* Added Tools Under Title - Styled clearly */}
                     <p className="text-neutral-800 text-[10px] md:text-xs font-bold font-mono mb-3 md:mb-4 uppercase tracking-widest border-b border-black/10 pb-2 inline-block">
