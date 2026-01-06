@@ -157,7 +157,7 @@ const PROJECTS: Project[] = [
       "Added real-time UI updates after photo uploads and profile picture changes using client-side state syncing."
     ],
     // ADD YOUR IMAGE PATHS HERE
-    link: "https://social-house-psi.vercel.app/auth",
+    link: "https://www.socialhouse.online",
     images: [
       "/projects/sh.png",
       "/projects/sh1.png",
