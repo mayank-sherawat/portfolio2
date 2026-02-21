@@ -468,7 +468,7 @@ const Footer = () => {
             <div className="flex items-center gap-2">
               <Globe size={12} /> <span>{PROFILE.location}</span>
             </div>
-            <div>© 2025 Edition</div>
+            <div>© 2026 Edition</div>
           </div>
         </div>
       </div>
@@ -497,7 +497,7 @@ export default function Portfolio() {
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-12 border-t border-white/20 pt-6 md:pt-8">
           <Reveal delay={200} className="w-full">
-            {/* Optimized for responsiveness: uses standard sizing on mobile, VW on desktop */}
+           
             <h2 className="text-xl sm:text-2xl md:text-[2.2vw] lg:text-[2.0vw] font-bold leading-tight text-neutral-200 whitespace-normal md:whitespace-nowrap overflow-visible">
               {PROFILE.role}
             </h2>
