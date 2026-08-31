@@ -1,0 +1,47 @@
+.radial {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 14px 0;
+  border-top: 1px solid #1f1f1f;
+  position: relative;
+  transition: transform .3s;
+}
+.radial:hover { transform: translateX(6px); }
+.radial__svg {
+  width: 80px; height: 80px;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+.radial__bg {
+  fill: none;
+  stroke: #1a1a1a;
+  stroke-width: 3;
+}
+.radial__fg {
+  fill: none;
+  stroke: #f5f5f5;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.radial__num {
+  position: absolute;
+  top: 50%; left: 40px;
+  transform: translate(-50%, -50%);
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 900;
+  font-size: 18px;
+  color: #f5f5f5;
+  margin-top: -6px;
+}
+.radial__label-main {
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+  color: #f5f5f5;
+  font-weight: 500;
+}
+.radial__label-sub {
+  font-size: 11px;
+  color: #777;
+  margin-top: 2px;
+}

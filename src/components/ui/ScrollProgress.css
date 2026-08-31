@@ -1,0 +1,38 @@
+.scroll-track {
+  position: fixed;
+  top: 0; right: 0;
+  width: 3px;
+  height: 100vh;
+  background: #1a1a1a;
+  z-index: 90;
+  transform-origin: top;
+}
+.scroll-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100%;
+  background: linear-gradient(180deg, #ffffff 0%, #888888 50%, #444444 100%);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .1s linear;
+  will-change: transform;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+}
+.scroll-num {
+  position: fixed;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: right center;
+  z-index: 90;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: #555;
+  letter-spacing: 0.15em;
+  white-space: nowrap;
+  padding-right: 24px;
+}
+@media (max-width: 767px) {
+  .scroll-num { display: none; }
+  .scroll-track { width: 2px; }
+}

@@ -1,0 +1,321 @@
+/* ====================================================================
+   PROJECT MOCKUPS  —  stylized "screenshots" of each real project
+   ==================================================================== */
+
+.mock {
+  position: absolute;
+  inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---------- phone frame (telehealth, socialhouse) ---------- */
+.mock--phone {
+  padding: 1rem;
+}
+.mock--phone .mock__screen {
+  width: 240px; height: 100%;
+  max-height: 460px;
+  border-radius: 32px;
+  border: 6px solid #1a1a1a;
+  position: relative;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), inset 0 0 0 1px #2a2a2a;
+}
+.mock--phone .mock__notch {
+  position: absolute;
+  top: 8px; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 16px;
+  background: #0a0a0a;
+  border-radius: 100px;
+  z-index: 2;
+}
+.mock--phone .mock__topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.mock--phone .mock__topbar .mock__dots { display: flex; gap: 3px; }
+.mock--phone .mock__topbar .mock__dots span {
+  width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .4;
+}
+
+/* screen themes */
+.mock__screen--light { background: #f5f5f5; color: #0c0c0c; }
+.mock__screen--dark  { background: #0a0a0a; color: #f5f5f5; }
+
+/* ---------- app content ---------- */
+.mock__app {
+  padding: 1.1rem 1.1rem 0.5rem;
+  display: flex; flex-direction: column; gap: 0.7rem;
+  flex: 1;
+  overflow: hidden;
+}
+.mock__greet { font-size: 10px; opacity: .55; font-family: 'IBM Plex Mono', monospace; }
+.mock__name  { font-size: 16px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
+
+.mock__hero-card {
+  background: linear-gradient(135deg, #222222 0%, #111111 100%);
+  color: #f5f5f5;
+  border: 1px solid #333333;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  display: flex; flex-direction: column; gap: 4px;
+  position: relative; overflow: hidden;
+}
+.mock__hero-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 60% at 100% 0%, rgba(255,255,255,.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+.mock__hero-tag   { font-size: 9px; letter-spacing: .15em; opacity: .9; font-family: 'IBM Plex Mono', monospace; }
+.mock__hero-title { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+.mock__hero-sub   { font-size: 10px; opacity: .85; font-family: 'IBM Plex Mono', monospace; }
+
+.mock__btn {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  border: 0;
+  cursor: pointer;
+  align-self: flex-start;
+  text-align: left;
+}
+.mock__btn--primary { background: #f5f5f5; color: #0c0c0c; }
+
+.mock__sec-head {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  opacity: .5;
+  margin-top: 4px;
+}
+.mock__slots { display: flex; gap: 6px; }
+.mock__slot {
+  flex: 1;
+  background: rgba(0,0,0,.05);
+  border-radius: 10px;
+  padding: 8px 4px;
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  border: 1px solid transparent;
+}
+.mock__screen--dark .mock__slot { background: rgba(255,255,255,.05); }
+.mock__slot-day { font-size: 8px; opacity: .55; letter-spacing: .1em; }
+.mock__slot-num { font-size: 16px; font-weight: 700; margin-top: 2px; }
+.mock__slot--active {
+  background: #0c0c0c !important;
+  color: #f5f5f5 !important;
+  border-color: #0c0c0c;
+}
+.mock__screen--dark .mock__slot--active {
+  background: #f5f5f5 !important;
+  color: #0c0c0c !important;
+  border-color: #f5f5f5;
+}
+.mock__slot--active .mock__slot-day { opacity: 1; }
+
+.mock__tabbar {
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 12px 1rem 18px;
+  margin-top: auto;
+  border-top: 1px solid rgba(0,0,0,.08);
+  flex-shrink: 0;
+}
+.mock__screen--dark .mock__tabbar { border-top-color: rgba(255,255,255,.08); }
+.mock__tab {
+  width: 18px; height: 18px; border-radius: 4px; background: rgba(0,0,0,.15);
+}
+.mock__screen--dark .mock__tab { background: rgba(255,255,255,.15); }
+.mock__tab--on { background: #0c0c0c; }
+.mock__screen--dark .mock__tab--on { background: #f5f5f5; }
+
+/* ---------- feed (socialhouse) ---------- */
+.mock__feed-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 2px 2px;
+}
+.mock__feed-title {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+}
+.mock__feed-icon {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  padding: 4px 8px;
+  border: 1px solid currentColor;
+  border-radius: 100px;
+  opacity: .7;
+}
+.mock__post {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 8px;
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+}
+.mock__post-head { display: flex; align-items: center; gap: 8px; }
+.mock__avatar {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px; font-weight: 700;
+  flex-shrink: 0;
+}
+.mock__avatar--1 { background: linear-gradient(135deg, #444, #888); color: #fff; }
+.mock__avatar--2 { background: linear-gradient(135deg, #333, #666); color: #fff; }
+.mock__avatar--3 { background: linear-gradient(135deg, #555, #999); color: #fff; }
+.mock__post-meta { display: flex; flex-direction: column; }
+.mock__post-name { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; }
+.mock__post-time { font-family: 'IBM Plex Mono', monospace; font-size: 8px; opacity: .5; }
+.mock__post-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+    repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,255,255,.04) 8px 9px);
+  border: 1px solid #222;
+  border-radius: 6px;
+}
+.mock__post-actions {
+  display: flex; gap: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  opacity: .65;
+}
+.mock__post-line {
+  height: 6px;
+  background: rgba(255,255,255,.15);
+  border-radius: 3px;
+}
+.mock__post-line--short { width: 60%; }
+
+/* ---------- desktop frame (timeline) ---------- */
+.mock--desktop { padding: 1.5rem; }
+.mock--desktop .mock__screen {
+  width: 100%; height: 100%;
+  max-height: 320px;
+  background: #f5f5f5;
+  color: #0c0c0c;
+  border-radius: 12px;
+  border: 1px solid #d0d0d0;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
+}
+.mock__topbar--desktop {
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #fff;
+  flex-shrink: 0;
+}
+.mock__logo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: -.02em;
+}
+.mock__nav-items {
+  display: flex; gap: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: #666;
+  margin-left: 8px;
+}
+.mock__nav-active { color: #0c0c0c; font-weight: 600; }
+.mock__topbar--desktop .mock__avatar { width: 22px; height: 22px; font-size: 9px; margin-left: auto; }
+
+.mock__desk {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  flex: 1;
+  overflow: hidden;
+}
+.mock__desk-side {
+  background: #fafafa;
+  border-right: 1px solid #e0e0e0;
+  padding: 10px 8px;
+  display: flex; flex-direction: column; gap: 8px;
+  overflow: hidden;
+}
+.mock__search {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: #999;
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+.mock__emp-list { display: flex; flex-direction: column; gap: 2px; }
+.mock__emp {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+}
+.mock__emp--on { background: rgba(0,0,0,0.06); }
+.mock__emp .mock__avatar { width: 18px; height: 18px; font-size: 7px; }
+.mock__emp-name { font-size: 9px; font-weight: 600; }
+.mock__emp-id   { font-size: 8px; color: #999; margin-top: 1px; }
+
+.mock__desk-main {
+  padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 12px;
+  overflow: hidden;
+}
+.mock__emp-hero { display: flex; align-items: center; gap: 10px; }
+
+.mock__timeline {
+  position: relative;
+  flex: 1;
+  border-left: 2px solid #e0e0e0;
+  margin-left: 8px;
+  padding-left: 14px;
+  min-height: 120px;
+}
+.mock__tl-line {
+  position: absolute; left: -2px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, transparent, #888888 20%, #888888 80%, transparent);
+}
+.mock__tl-event {
+  position: absolute;
+  left: -7px;
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
+}
+.mock__tl-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: #333333;
+  border: 2px solid #f5f5f5;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px #cccccc;
+}
+.mock__tl-dot--a { background: #111111; }
+.mock__tl-dot--b { background: #555555; }
+.mock__tl-dot--c { background: #888888; }
+.mock__tl-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  display: flex; flex-direction: column;
+  min-width: 0;
+}
+.mock__tl-t { font-size: 9px; font-weight: 600; }
+.mock__tl-s { font-size: 8px; color: #888; margin-top: 1px; }
