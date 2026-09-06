@@ -26,6 +26,9 @@ export default function Cursor() {
     let bx = -100, by = -100
     let isVisible = false
     let isHero = false
+    /* elements that keep the OS pointer instead (see index.css) — the custom
+       cursor hides over them so you never see two cursors at once */
+    let isNative = false
     let isHovering = false
     let currentLabel = ''
     let magneticCenter = null
@@ -33,9 +36,10 @@ export default function Cursor() {
 
     const MAG_RADIUS = 80
     const MAG_PULL   = 0.35
+    const NATIVE_CURSOR = '.nav a, .nav button, .hero a, .hero button'
 
     const updateVisibility = () => {
-      const show = isVisible && !isHero
+      const show = isVisible && !isHero && !isNative
       if (show) {
         cursor.classList.add('is-visible')
         trail.classList.add('is-visible')
@@ -66,6 +70,7 @@ export default function Cursor() {
 
     const onLeave = () => {
       isVisible = false
+      isNative = false
       magneticCenter = null
       updateVisibility()
     }
@@ -74,8 +79,10 @@ export default function Cursor() {
     const onOver = (e) => {
       const heroEl = e.target.closest('.hero')
       const nextIsHero = heroEl !== null
-      if (nextIsHero !== isHero) {
+      const nextIsNative = e.target.closest(NATIVE_CURSOR) !== null
+      if (nextIsHero !== isHero || nextIsNative !== isNative) {
         isHero = nextIsHero
+        isNative = nextIsNative
         updateVisibility()
       }
 

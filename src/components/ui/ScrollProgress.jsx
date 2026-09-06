@@ -54,7 +54,7 @@ export default function ScrollProgress() {
       <div className="scroll-track" aria-hidden="true">
         <div className="scroll-fill" ref={fillRef} />
       </div>
-      <div className="scroll-num" ref={numRef} aria-hidden="true">01 / 07</div>
+      <div className="scroll-num" ref={numRef} aria-hidden="true">01 / 01</div>
     </>
   )
 }
