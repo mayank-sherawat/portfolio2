@@ -1,172 +1,131 @@
 /* ====================================================================
-   PROJECT MOCKUPS  —  stylized "screenshots" of each real project
+   PROJECT MOCKUPS
+   Telehealth and SocialHouse are real screenshots dropped into a device
+   frame; Timeline is drawn (no public URL to capture). The device frames
+   are what let a 16:10 browser shot and a portrait phone shot share the
+   same 4/5 card without either one looking cropped or lost.
    ==================================================================== */
 
+/* Bottom-anchored: every frame is flush with the card's lower edge and gets
+   clipped there, so the artwork reads as rising into the card rather than
+   floating in it with dead space underneath. */
 .mock {
   position: absolute;
   inset: 0;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: flex-end; justify-content: center;
   pointer-events: none;
   z-index: 1;
 }
 
-/* ---------- phone frame (telehealth, socialhouse) ---------- */
+/* ---------- the screenshot itself ----------
+   object-position: top so a tall page shows its header rather than its
+   middle when the frame crops it. The dark ground keeps the frame from
+   flashing white in the gap before a lazy image decodes. */
+.mock__screen--shot { background: #0a0a0a; }
+.mock__shot {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+  object-position: top center;
+  /* Nearly full brightness. These used to be dimmed to .6 because the card's
+     white copy sat directly on top of them; now that .work-text owns its own
+     zone the screenshots are free to actually read as screenshots. The slight
+     hold-back at rest just keeps two cream-coloured sites from glaring out of
+     a near-black page, and hover takes it off. */
+  filter: brightness(.9);
+  transition: filter .5s cubic-bezier(.2, .8, .2, 1);
+}
+.work-card--tilt:hover .mock__shot { filter: brightness(1); }
+@media (prefers-reduced-motion: reduce) {
+  .mock__shot { transition: none; }
+}
+
+/* ---------- phone frame (telehealth) ----------
+   height drives the size and the ratio derives the width, so the device fills
+   the stage exactly however tall the card ends up. Bottom corners are square
+   and the bottom border is dropped because that edge is off the card. */
 .mock--phone {
-  padding: 1rem;
+  padding: 1.25rem 1rem 0;
 }
 .mock--phone .mock__screen {
-  width: 240px; height: 100%;
-  max-height: 460px;
-  border-radius: 32px;
+  height: 100%; width: auto;
+  aspect-ratio: 0.52;
+  border-radius: 32px 32px 0 0;
   border: 6px solid #1a1a1a;
+  border-bottom: 0;
   position: relative;
   overflow: hidden;
   display: flex; flex-direction: column;
   box-shadow: 0 30px 60px -20px rgba(0,0,0,.8), inset 0 0 0 1px #2a2a2a;
 }
-.mock--phone .mock__notch {
+/* absolute rather than a flex child: the frame's height is set by the card,
+   not by the image, so the image has to fill whatever it is given */
+.mock--phone .mock__shot {
   position: absolute;
-  top: 8px; left: 50%; transform: translateX(-50%);
-  width: 60px; height: 16px;
-  background: #0a0a0a;
-  border-radius: 100px;
-  z-index: 2;
+  inset: 0;
+  height: 100%;
 }
-.mock--phone .mock__topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 22px 6px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
+
+/* ---------- browser frame (socialhouse) ----------
+   fills the stage in both axes; the shot is cropped by object-fit rather than
+   letterboxed, so the frame reaches the card's bottom edge like the others */
+.mock--browser {
+  padding: 1.25rem 1.5rem 0;
+}
+.mock--browser .mock__screen {
+  width: 100%; height: 100%;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid #2a2a2a;
+  border-bottom: 0;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.8);
+}
+/* The viewport takes whatever height is left under the chrome bar and the shot
+   covers it. It must NOT carry an aspect-ratio: the frame's height comes from
+   the stage now, and a ratio here would fight it. (An aspect-ratio on the
+   <img> itself never worked either — stretched as a flex item it resolved to
+   the full card height and blew past the frame.) */
+.mock--browser .mock__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.mock--browser .mock__shot {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+}
+.mock__chrome {
+  display: flex; align-items: center; gap: 5px;
+  padding: 8px 10px;
+  background: #141414;
+  border-bottom: 1px solid #242424;
   flex-shrink: 0;
 }
-.mock--phone .mock__topbar .mock__dots { display: flex; gap: 3px; }
-.mock--phone .mock__topbar .mock__dots span {
-  width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .4;
+.mock__chrome-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #333;
+  flex-shrink: 0;
 }
-
-/* screen themes */
-.mock__screen--light { background: #f5f5f5; color: #0c0c0c; }
-.mock__screen--dark  { background: #0a0a0a; color: #f5f5f5; }
-
-/* ---------- app content ---------- */
-.mock__app {
-  padding: 1.1rem 1.1rem 0.5rem;
-  display: flex; flex-direction: column; gap: 0.7rem;
+.mock__chrome-url {
   flex: 1;
-  overflow: hidden;
-}
-.mock__greet { font-size: 10px; opacity: .55; font-family: 'IBM Plex Mono', monospace; }
-.mock__name  { font-size: 16px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; margin-top: 1px; }
-
-.mock__hero-card {
-  background: linear-gradient(135deg, #222222 0%, #111111 100%);
-  color: #f5f5f5;
-  border: 1px solid #333333;
-  border-radius: 14px;
-  padding: 0.9rem 1rem;
-  display: flex; flex-direction: column; gap: 4px;
-  position: relative; overflow: hidden;
-}
-.mock__hero-card::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(120% 60% at 100% 0%, rgba(255,255,255,.12) 0%, transparent 50%);
-  pointer-events: none;
-}
-.mock__hero-tag   { font-size: 9px; letter-spacing: .15em; opacity: .9; font-family: 'IBM Plex Mono', monospace; }
-.mock__hero-title { font-size: 14px; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
-.mock__hero-sub   { font-size: 10px; opacity: .85; font-family: 'IBM Plex Mono', monospace; }
-
-.mock__btn {
-  margin-top: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  border: 0;
-  cursor: pointer;
-  align-self: flex-start;
-  text-align: left;
-}
-.mock__btn--primary { background: #f5f5f5; color: #0c0c0c; }
-
-.mock__sec-head {
+  margin-left: 8px;
+  padding: 3px 10px;
+  background: #0c0c0c;
+  border-radius: 100px;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
-  letter-spacing: .15em;
-  text-transform: uppercase;
-  opacity: .5;
-  margin-top: 4px;
-}
-.mock__slots { display: flex; gap: 6px; }
-.mock__slot {
-  flex: 1;
-  background: rgba(0,0,0,.05);
-  border-radius: 10px;
-  padding: 8px 4px;
+  color: #777;
   text-align: center;
-  font-family: 'IBM Plex Mono', monospace;
-  border: 1px solid transparent;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.mock__screen--dark .mock__slot { background: rgba(255,255,255,.05); }
-.mock__slot-day { font-size: 8px; opacity: .55; letter-spacing: .1em; }
-.mock__slot-num { font-size: 16px; font-weight: 700; margin-top: 2px; }
-.mock__slot--active {
-  background: #0c0c0c !important;
-  color: #f5f5f5 !important;
-  border-color: #0c0c0c;
-}
-.mock__screen--dark .mock__slot--active {
-  background: #f5f5f5 !important;
-  color: #0c0c0c !important;
-  border-color: #f5f5f5;
-}
-.mock__slot--active .mock__slot-day { opacity: 1; }
 
-.mock__tabbar {
-  display: flex; justify-content: space-around; align-items: center;
-  padding: 12px 1rem 18px;
-  margin-top: auto;
-  border-top: 1px solid rgba(0,0,0,.08);
-  flex-shrink: 0;
-}
-.mock__screen--dark .mock__tabbar { border-top-color: rgba(255,255,255,.08); }
-.mock__tab {
-  width: 18px; height: 18px; border-radius: 4px; background: rgba(0,0,0,.15);
-}
-.mock__screen--dark .mock__tab { background: rgba(255,255,255,.15); }
-.mock__tab--on { background: #0c0c0c; }
-.mock__screen--dark .mock__tab--on { background: #f5f5f5; }
+/* ---------- screen themes ---------- */
+.mock__screen--light { background: #f5f5f5; color: #0c0c0c; }
 
-/* ---------- feed (socialhouse) ---------- */
-.mock__feed-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 4px 2px 2px;
-}
-.mock__feed-title {
-  font-family: 'Big Shoulders Display', sans-serif;
-  font-weight: 900;
-  font-size: 22px;
-  letter-spacing: -.02em;
-  text-transform: uppercase;
-}
-.mock__feed-icon {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  padding: 4px 8px;
-  border: 1px solid currentColor;
-  border-radius: 100px;
-  opacity: .7;
-}
-.mock__post {
-  display: flex; flex-direction: column; gap: 6px;
-  padding: 8px;
-  background: rgba(255,255,255,.04);
-  border-radius: 10px;
-}
-.mock__post-head { display: flex; align-items: center; gap: 8px; }
+/* ---------- avatars (timeline) ---------- */
 .mock__avatar {
   width: 22px; height: 22px;
   border-radius: 50%;
@@ -178,43 +137,40 @@
 .mock__avatar--1 { background: linear-gradient(135deg, #444, #888); color: #fff; }
 .mock__avatar--2 { background: linear-gradient(135deg, #333, #666); color: #fff; }
 .mock__avatar--3 { background: linear-gradient(135deg, #555, #999); color: #fff; }
-.mock__post-meta { display: flex; flex-direction: column; }
-.mock__post-name { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; }
-.mock__post-time { font-family: 'IBM Plex Mono', monospace; font-size: 8px; opacity: .5; }
-.mock__post-img {
-  width: 100%;
-  aspect-ratio: 4/3;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
-    repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,255,255,.04) 8px 9px);
-  border: 1px solid #222;
-  border-radius: 6px;
-}
-.mock__post-actions {
-  display: flex; gap: 10px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  opacity: .65;
-}
-.mock__post-line {
-  height: 6px;
-  background: rgba(255,255,255,.15);
-  border-radius: 3px;
-}
-.mock__post-line--short { width: 60%; }
 
-/* ---------- desktop frame (timeline) ---------- */
-.mock--desktop { padding: 1.5rem; }
+/* ---------- desktop frame (timeline) ----------
+   On the wide card the stage is taller than 16:10 is wide, so the frame is
+   sized off its height and runs off the card's right edge — a screen too big
+   for the card reads better than a small one marooned in it. Left-aligned so
+   the sidebar and the timeline itself stay in view. */
+.mock--desktop {
+  padding: 1.25rem 0 0 1.5rem;
+  justify-content: flex-start;
+}
 .mock--desktop .mock__screen {
-  width: 100%; height: 100%;
-  max-height: 320px;
+  height: 100%; width: auto;
+  aspect-ratio: 16 / 10;
   background: #f5f5f5;
   color: #0c0c0c;
-  border-radius: 12px;
+  border-radius: 12px 12px 0 0;
   border: 1px solid #d0d0d0;
+  border-bottom: 0;
   overflow: hidden;
   display: flex; flex-direction: column;
   box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
+  /* held back to match .mock__shot: this frame is a big #f5f5f5 slab and at
+     full strength it glares next to the two dimmed screenshots */
+  filter: brightness(.9);
+  transition: filter .5s cubic-bezier(.2, .8, .2, 1);
+}
+.work-card--tilt:hover .mock--desktop .mock__screen { filter: brightness(1); }
+@media (prefers-reduced-motion: reduce) {
+  .mock--desktop .mock__screen { transition: none; }
+}
+/* stacked on phones the stage is short and wide, so drive off width instead */
+@media (max-width: 767px) {
+  .mock--desktop { padding: 1.25rem 1rem 0; justify-content: center; }
+  .mock--desktop .mock__screen { width: 100%; height: auto; }
 }
 .mock__topbar--desktop {
   display: flex; align-items: center; gap: 16px;
@@ -269,8 +225,8 @@
 }
 .mock__emp--on { background: rgba(0,0,0,0.06); }
 .mock__emp .mock__avatar { width: 18px; height: 18px; font-size: 7px; }
-.mock__emp-name { font-size: 9px; font-weight: 600; }
-.mock__emp-id   { font-size: 8px; color: #999; margin-top: 1px; }
+.mock__emp-name { font-size: 11px; font-weight: 600; }
+.mock__emp-id   { font-size: 9px; color: #999; margin-top: 1px; }
 
 .mock__desk-main {
   padding: 12px 16px;
@@ -279,6 +235,9 @@
 }
 .mock__emp-hero { display: flex; align-items: center; gap: 10px; }
 
+/* The events are positioned as a % of this box, so letting it grow to the full
+   frame height spreads four cards over ~500px and the app reads as an empty
+   white slab. Cap it and let the space fall below instead. */
 .mock__timeline {
   position: relative;
   flex: 1;
@@ -286,6 +245,7 @@
   margin-left: 8px;
   padding-left: 14px;
   min-height: 120px;
+  max-height: 300px;
 }
 .mock__tl-line {
   position: absolute; left: -2px; top: 0; bottom: 0; width: 2px;
@@ -317,5 +277,5 @@
   display: flex; flex-direction: column;
   min-width: 0;
 }
-.mock__tl-t { font-size: 9px; font-weight: 600; }
-.mock__tl-s { font-size: 8px; color: #888; margin-top: 1px; }
+.mock__tl-t { font-size: 11px; font-weight: 600; }
+.mock__tl-s { font-size: 10px; color: #888; margin-top: 1px; }

@@ -1,118 +1,84 @@
 import './ProjectMockup.css'
 
-/* Custom SVG mockups for each project — looks like real product UI,
-   not generic abstract patterns. Each one hints at the actual app. */
+/* Card artwork for each project.
+
+   Telehealth and SocialHouse are REAL screenshots of the live sites, captured
+   with headless Chrome and encoded to webp (recipe in CLAUDE.md). They live in
+   public/ and are referenced by root path.
+
+   Timeline is internal to Escorts Kubota with no public URL, so it keeps a
+   hand-built mockup — clearly illustrative rather than pretending to be a
+   screenshot of something nobody outside the company can see. */
+
+const SHOTS = {
+  telehealth: {
+    frame: 'phone',
+    src: '/shot-telehealth.webp',
+    w: 520, h: 1000
+  },
+  socialhouse: {
+    frame: 'browser',
+    src: '/shot-socialhouse.webp',
+    w: 1280, h: 800,
+    host: 'socialhouse.online'
+  }
+}
 
 export default function ProjectMockup({ id }) {
-  if (id === 'telehealth') return <Telehealth />
-  if (id === 'socialhouse') return <SocialHouse />
-  if (id === 'timeline')    return <Timeline />
+  const shot = SHOTS[id]
+  if (shot) return shot.frame === 'phone' ? <PhoneShot {...shot} /> : <BrowserShot {...shot} />
+  if (id === 'timeline') return <Timeline />
   return null
 }
 
+/* The whole mock is decorative — the card already carries the project's name,
+   description and tags as real text — so the wrapper is aria-hidden and the
+   image takes an empty alt rather than repeating that copy to a screen reader. */
+function Shot({ src, w, h }) {
+  return (
+    <img
+      className="mock__shot"
+      src={src}
+      width={w}
+      height={h}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  )
+}
+
 /* ====================================================================
-   PEDIATRIC TELEHEALTH  —  phone frame + appointment booking
+   PHONE FRAME  —  for sites whose real layout is a portrait column
    ==================================================================== */
-function Telehealth() {
+function PhoneShot(props) {
   return (
     <div className="mock mock--phone" aria-hidden="true">
-      <div className="mock__notch" />
-      <div className="mock__screen mock__screen--light">
-        <div className="mock__topbar">
-          <div className="mock__time">9:41</div>
-          <div className="mock__dots">
-            <span /><span /><span />
-          </div>
-        </div>
-        <div className="mock__app">
-          <div className="mock__greet">Good morning,</div>
-          <div className="mock__name">Priya's Mom 👋</div>
-
-          <div className="mock__hero-card">
-            <div className="mock__hero-tag">UPCOMING</div>
-            <div className="mock__hero-title">Dr. Anjali Sharma</div>
-            <div className="mock__hero-sub">Pediatrician · Tue 2:30 PM</div>
-            <button className="mock__btn mock__btn--primary" type="button">
-              Join Google Meet →
-            </button>
-          </div>
-
-          <div className="mock__sec-head">Next available</div>
-          <div className="mock__slots">
-            <div className="mock__slot">
-              <div className="mock__slot-day">TUE</div>
-              <div className="mock__slot-num">14</div>
-            </div>
-            <div className="mock__slot mock__slot--active">
-              <div className="mock__slot-day">WED</div>
-              <div className="mock__slot-num">15</div>
-            </div>
-            <div className="mock__slot">
-              <div className="mock__slot-day">THU</div>
-              <div className="mock__slot-num">16</div>
-            </div>
-            <div className="mock__slot">
-              <div className="mock__slot-day">FRI</div>
-              <div className="mock__slot-num">17</div>
-            </div>
-          </div>
-        </div>
-        <div className="mock__tabbar">
-          <span className="mock__tab mock__tab--on" />
-          <span className="mock__tab" />
-          <span className="mock__tab" />
-          <span className="mock__tab" />
-        </div>
+      <div className="mock__screen mock__screen--shot">
+        <Shot {...props} />
       </div>
     </div>
   )
 }
 
 /* ====================================================================
-   SOCIALHOUSE  —  phone frame + social feed
+   BROWSER FRAME  —  for sites whose real layout is wide
    ==================================================================== */
-function SocialHouse() {
+function BrowserShot({ host, ...props }) {
   return (
-    <div className="mock mock--phone" aria-hidden="true">
-      <div className="mock__notch" />
-      <div className="mock__screen mock__screen--dark">
-        <div className="mock__topbar">
-          <div className="mock__time">9:41</div>
-          <div className="mock__dots">
-            <span /><span /><span />
-          </div>
+    <div className="mock mock--browser" aria-hidden="true">
+      <div className="mock__screen mock__screen--shot">
+        <div className="mock__chrome">
+          <span className="mock__chrome-dot" />
+          <span className="mock__chrome-dot" />
+          <span className="mock__chrome-dot" />
+          <span className="mock__chrome-url">{host}</span>
         </div>
-        <div className="mock__app">
-          <div className="mock__feed-head">
-            <div className="mock__feed-title">feed</div>
-            <div className="mock__feed-icon">⌘</div>
-          </div>
-          <div className="mock__post">
-            <div className="mock__post-head">
-              <div className="mock__avatar mock__avatar--1">SR</div>
-              <div className="mock__post-meta">
-                <div className="mock__post-name">sara.rae</div>
-                <div className="mock__post-time">2h</div>
-              </div>
-            </div>
-            <div className="mock__post-img" />
-            <div className="mock__post-actions">
-              <span>♡ 142</span>
-              <span>◴ 18</span>
-              <span>↗</span>
-            </div>
-          </div>
-          <div className="mock__post mock__post--noimg">
-            <div className="mock__post-head">
-              <div className="mock__avatar mock__avatar--2">DK</div>
-              <div className="mock__post-meta">
-                <div className="mock__post-name">dev.kapoor</div>
-                <div className="mock__post-time">5h</div>
-              </div>
-            </div>
-            <div className="mock__post-line" />
-            <div className="mock__post-line mock__post-line--short" />
-          </div>
+        {/* the wrapper owns the ratio, not the img: an <img> sizing itself from
+            aspect-ratio while it is a flex item stretched to the frame's width
+            resolved to the full card height instead of 16:10 */}
+        <div className="mock__viewport">
+          <Shot {...props} />
         </div>
       </div>
     </div>
@@ -121,6 +87,7 @@ function SocialHouse() {
 
 /* ====================================================================
    EMPLOYEE TIMELINE  —  desktop frame + HR timeline view
+   Drawn, not captured: the system is internal and has no public URL.
    ==================================================================== */
 function Timeline() {
   return (

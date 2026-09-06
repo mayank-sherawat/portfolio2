@@ -6,16 +6,16 @@ const PROJECTS = [
     id: 'telehealth',
     n: '01 / 03',
     title: ['Pediatric', 'Telehealth'],
-    desc: 'A production-ready telehealth platform for a pediatric clinic — scheduling, payments, Meet links, doctor dashboard.',
+    desc: 'A production telehealth platform for a pediatric clinic — atomic slot-locking for a 0% double-booking rate, HMAC-verified payments, automated Meet links.',
     tags: ['Next.js', 'TypeScript', 'Supabase', 'Razorpay', 'Zod'],
-    year: 'JAN — FEB 2026',
+    year: 'JUL — AUG 2026',
     accent: 'cyan'
   },
   {
     id: 'socialhouse',
     n: '02 / 03',
     title: ['Social', 'House'],
-    desc: 'A full-stack social platform — auth, media, feeds, deployed on Vercel. The kind of thing you build to learn how everything fits.',
+    desc: 'A full-stack social platform — NextAuth sessions, Cloudinary media pipeline, Prisma-optimised queries, deployed on Vercel.',
     tags: ['Next.js', 'Prisma', 'PostgreSQL', 'NextAuth', 'Cloudinary'],
     year: 'NOV — DEC 2025',
     accent: 'orange'
@@ -32,6 +32,10 @@ const PROJECTS = [
   }
 ]
 
+/* Two zones, never overlapping: copy on top, artwork below. The artwork used
+   to sit *under* the copy behind a dark gradient, which forced the screenshots
+   to be dimmed into unreadability and still let the last line of .work-desc
+   collide with the mockup. Keep them separate. */
 function WorkCard({ project, tiltRef, onOpen }) {
   return (
     <article
@@ -41,29 +45,32 @@ function WorkCard({ project, tiltRef, onOpen }) {
       data-cursor="view"
     >
       <div className="work-card__shine" aria-hidden="true" />
-      <div className="work-card__bg" aria-hidden="true">
-        <ProjectMockup id={project.id} />
-      </div>
-      <div className="work-card__overlay" aria-hidden="true" />
-      <div className="work-content">
-        <div className="work-num">{project.n}</div>
+
+      <div className="work-text">
+        <div className="work-head">
+          <span className="work-num">{project.n}</span>
+          <span className="work-explore">
+            <span>case study</span>
+            <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+              <path d="M8.6 0.35L13.12 4.87L8.6 9.39" stroke="currentColor" />
+              <line y1="5" x2="13.12" y2="5" stroke="currentColor" />
+            </svg>
+          </span>
+        </div>
         <h3 className="work-title display">
           {project.title.map((t, j) => <span key={j}>{t}<br /></span>)}
         </h3>
         <p className="work-desc">{project.desc}</p>
-      </div>
-      <div className="work-foot">
-        <div className="work-tags">
-          {project.tags.map((t, j) => <span key={j} className="work-tag">{t}</span>)}
+        <div className="work-foot">
+          <div className="work-tags">
+            {project.tags.map((t, j) => <span key={j} className="work-tag">{t}</span>)}
+          </div>
+          <div className="work-year">{project.year}</div>
         </div>
-        <div className="work-year">{project.year}</div>
       </div>
-      <div className="work-explore">
-        <span>case study</span>
-        <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-          <path d="M8.6 0.35L13.12 4.87L8.6 9.39" stroke="currentColor" />
-          <line y1="5" x2="13.12" y2="5" stroke="currentColor" />
-        </svg>
+
+      <div className="work-stage" aria-hidden="true">
+        <ProjectMockup id={project.id} />
       </div>
     </article>
   )
@@ -85,10 +92,6 @@ export default function Works({ onOpenCase }) {
           {PROJECTS.map((p, i) => (
             <WorkCard key={i} project={p} tiltRef={tilts[i]} onOpen={onOpenCase} />
           ))}
-        </div>
-        <div className="works-meta">
-          <div className="count">(<span>03</span>)</div>
-          <div>© 25 — 26</div>
         </div>
       </div>
     </section>
