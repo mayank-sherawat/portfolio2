@@ -1,6 +1,6 @@
 import TextScramble from '../components/ui/TextScramble.jsx'
-import Terminal from '../components/ui/Terminal.jsx'
 
+/* The live terminal used to live here — it now sits in the hero. */
 export default function Now() {
   return (
     <section className="now">
@@ -11,9 +11,6 @@ export default function Now() {
             <TextScramble as="span" text="Building AI for BFSI" trigger="scroll" />
           </h2>
           <p className="now-sub">Decimal Technologies Ltd · Gurugram, India</p>
-        </div>
-        <div className="now-frame">
-          <Terminal />
         </div>
       </div>
     </section>

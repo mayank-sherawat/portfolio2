@@ -7,12 +7,12 @@ export default function Glitch() {
         <div className="glitch-grid">
           <div className="glitch-text-wrap">
             <div className="glitch-sticky">
-              <div className="glitch-line"><span className="l">i ship.</span></div>
-              <div className="glitch-line"><span className="l2">i ship.</span></div>
-              <div className="glitch-line"><span className="l">i ship.</span></div>
-              <div className="glitch-line"><span className="l3">i ship.</span></div>
+              <div className="glitch-line"><span className="l">i build.</span></div>
+              <div className="glitch-line"><span className="l2">i break it.</span></div>
+              <div className="glitch-line"><span className="l">i fix it.</span></div>
+              <div className="glitch-line"><span className="l3">i learn.</span></div>
               <p className="glitch-final">
-                <TextScramble as="span" text="I build products that scale, perform, and ship." trigger="scroll" />
+                <TextScramble as="span" text="Mostly in that order." trigger="scroll" />
               </p>
             </div>
           </div>

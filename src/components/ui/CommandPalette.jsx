@@ -7,15 +7,19 @@ const ACTIONS = [
   { id: 'works',    label: 'Go to Works',     section: 'Navigation', shortcut: 'G W', icon: '→', run: () => goTo('#works') },
   { id: 'studio',   label: 'Go to Studio',    section: 'Navigation', shortcut: 'G S', icon: '→', run: () => goTo('#about') },
   { id: 'contact',  label: 'Go to Contact',   section: 'Navigation', shortcut: 'G C', icon: '→', run: () => goTo('#contact') },
-  { id: 'email',    label: 'Send me an email',         section: 'Actions', icon: '@', run: () => window.location.href = 'mailto:mayanksherawat21@gmail.com' },
-  { id: 'call',     label: 'Copy phone number',        section: 'Actions', icon: '☎', run: () => copy('+917027004234') },
-  { id: 'linkedin', label: 'Open LinkedIn',            section: 'Actions', icon: 'in', run: () => window.open('https://www.linkedin.com', '_blank') },
-  { id: 'github',   label: 'Open GitHub',              section: 'Actions', icon: 'gh', run: () => window.open('https://github.com', '_blank') },
-  { id: 'resume',   label: 'View source (GitHub repo)', section: 'Actions', icon: '<>', run: () => window.open('https://github.com', '_blank') },
-  { id: 'theme',    label: 'Toggle theme (easter egg)', section: 'Play',   icon: '◐', run: () => flipTheme() },
-  { id: 'konami',   label: '↑↑↓↓←→←→BA — try it',       section: 'Play',   icon: '✦', run: () => {} },
-  { id: 'time',     label: 'What time is it?',          section: 'Fun',    icon: '◴', run: () => alert(new Date().toLocaleTimeString()) },
-  { id: 'hire',     label: 'sudo hire mayank',          section: 'Fun',    icon: '$', run: () => alert('✓ request sent — opening mail client…\n(window.location = mailto)') }
+  { id: 'email',      label: 'Send me an email',        section: 'Actions', icon: '@', run: () => window.location.href = 'mailto:mayanksherawat21@gmail.com' },
+  { id: 'call',       label: 'Copy phone number',       section: 'Actions', icon: '☎', run: () => copy('+917027004234') },
+  { id: 'linkedin',   label: 'Open LinkedIn',           section: 'Actions', icon: 'in', run: () => open('https://www.linkedin.com/in/mayank-sherawat') },
+  { id: 'github',     label: 'Open GitHub',             section: 'Actions', icon: 'gh', run: () => open('https://github.com/mayank-sherawat') },
+  { id: 'resume',     label: 'Open résumé (PDF)',       section: 'Actions', icon: '↓', run: () => open('/Mayank_Sherawat_Resume.pdf') },
+  { id: 'source',     label: 'View source (this site)', section: 'Actions', icon: '<>', run: () => open('https://github.com/mayank-sherawat/portfolio2') },
+  { id: 'telehealth', label: 'Open Pediatric Telehealth — live', section: 'Projects', icon: '01', run: () => open('https://babydocritu.com') },
+  { id: 'socialhouse',label: 'Open SocialHouse — live',  section: 'Projects', icon: '02', run: () => open('https://www.socialhouse.online') },
+  { id: 'time',       label: 'What time is it?',         section: 'Fun',    icon: '◴', run: () => flash(new Date().toLocaleTimeString()) },
+  { id: 'hire',       label: 'sudo hire mayank',         section: 'Fun',    icon: '$', run: () => {
+    flash('✓ request sent — opening mail client…')
+    setTimeout(() => { window.location.href = 'mailto:mayanksherawat21@gmail.com?subject=Let%27s%20work%20together' }, 900)
+  } }
 ]
 
 function goTo(id) {
@@ -27,6 +31,9 @@ function goTo(id) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
+}
+function open(href) {
+  window.open(href, '_blank', 'noopener,noreferrer')
 }
 async function copy(text) {
   try {
@@ -43,11 +50,6 @@ function flash(msg) {
   el.classList.add('is-on')
   setTimeout(() => el.classList.remove('is-on'), 1800)
 }
-function flipTheme() {
-  document.body.classList.toggle('theme-invert')
-  flash(document.body.classList.contains('theme-invert') ? 'theme: inverted' : 'theme: normal')
-}
-
 export default function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
@@ -185,15 +187,6 @@ export default function CommandPalette() {
       </div>
 
       <div id="cmdk-flash" className="cmdk-flash" />
-
-      <button
-        className="cmdk-hint"
-        onClick={() => setOpen(true)}
-        data-cursor="cmd"
-        aria-label="Open command palette"
-      >
-        <kbd>⌘</kbd><kbd>K</kbd>
-      </button>
     </>
   )
 }

@@ -1,10 +1,10 @@
 import Counter from '../components/ui/Stats.jsx'
 
 const STATS = [
-  { v: 1.5,  d: 1, suf: '+', label: 'years shipping',   sub: 'production code' },
-  { v: 3,    d: 0, suf: '',  label: 'live projects',    sub: 'shipped to real users' },
-  { v: 5,    d: 0, suf: '',  label: 'certifications',   sub: 'IBM · Google · HKUST' },
-  { v: 8.76, d: 2, suf: '',  label: 'CGPA',             sub: 'B.E. Computer Science' }
+  { v: 1,    d: 0, suf: '+', label: 'years experience',  sub: 'since Aug 2025' },
+  { v: 3,    d: 0, suf: '',  label: 'projects built',    sub: '2 live · 1 internal' },
+  { v: 5,    d: 0, suf: '',  label: 'certifications',    sub: 'IBM · Google · HKUST' },
+  { v: 8.76, d: 2, suf: '',  label: 'CGPA',              sub: 'B.E. Computer Science' }
 ]
 
 export default function Stats() {

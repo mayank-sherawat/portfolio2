@@ -3,12 +3,31 @@ import TextScramble from '../components/ui/TextScramble.jsx'
 import RadialSkill from '../components/ui/RadialSkill.jsx'
 
 const SKILLS = [
-  { value: 95, label: 'React / Next.js',         sub: 'frontend & SSR' },
-  { value: 92, label: 'TypeScript / Node.js',    sub: 'type-safe full stack' },
-  { value: 88, label: 'PostgreSQL / MongoDB',    sub: 'relational & document' },
-  { value: 85, label: 'Prisma / NextAuth / Zod', sub: 'data, auth, validation' },
-  { value: 90, label: 'Tailwind CSS',            sub: 'utility-first styling' },
-  { value: 80, label: 'REST APIs / Vercel',      sub: 'shipping & deployment' }
+  { value: 95, label: 'React / Next.js',              sub: 'frontend & SSR' },
+  { value: 92, label: 'TypeScript / JavaScript',      sub: 'type-safe by default' },
+  { value: 90, label: 'Node.js / Express.js',         sub: 'RESTful APIs & webhooks' },
+  { value: 88, label: 'PostgreSQL / Supabase / MongoDB', sub: 'relational & document' },
+  { value: 85, label: 'NextAuth / OAuth 2.0 / Zod',   sub: 'auth, validation, security' },
+  { value: 90, label: 'Tailwind / Framer Motion',     sub: 'styling & motion' }
+]
+
+const EXPERIENCE = [
+  ['Decimal Technologies Ltd',   'Graduate Engineer Trainee · Gurugram · Aug 2026 — Present'],
+  ['Decimal Technologies Ltd',   'Software Developer Intern · Gurugram · Feb — Jul 2026'],
+  ['Escorts Kubota Ltd',         'Full Stack Developer Intern · Faridabad · Aug 2025 — Feb 2026']
+]
+
+const EDUCATION = [
+  ['Chitkara University, Punjab',   'BE Computer Science · 8.76 CGPA · 2021—2025'],
+  ['Korea University, South Korea', 'Exchange Semester · A Grade · 2022']
+]
+
+const CERTIFICATIONS = [
+  ['Developing Front-End Apps with React',   'IBM'],
+  ['Getting Started with Git and GitHub',    'IBM'],
+  ['Agile Project Management',               'Google'],
+  ['Python for Data Science, AI Development','IBM'],
+  ['Software Engineering Specialization',    'HKUST']
 ]
 
 const FORME_SVGS = [
@@ -18,6 +37,24 @@ const FORME_SVGS = [
   { cls: 'f-etoile', svg: <svg viewBox="0 0 100 100" fill="none"><g stroke="#f5f5f5" strokeWidth="1.5"><line x1="50" y1="15" x2="50" y2="85" /><line x1="15" y1="50" x2="85" y2="50" /><line x1="25" y1="25" x2="75" y2="75" /><line x1="75" y1="25" x2="25" y2="75" /></g></svg> },
   { cls: 'f-coeur',  svg: <svg viewBox="0 0 100 100" fill="none"><polygon points="50,15 85,50 50,85 15,50" stroke="#f5f5f5" strokeWidth="1.5" fill="none" /><polygon points="50,30 70,50 50,70 30,50" stroke="#f5f5f5" strokeWidth="1" fill="none" opacity=".5" /></svg> }
 ]
+
+/* The text is wrapped in a span so the hover nudge can ride on a transform:
+   translating .team-name itself would drag its border-top out of line with the
+   rows above and below it. */
+function TeamBlock({ label, rows, style }) {
+  return (
+    <div className="team-block" style={style}>
+      <div><div className="team-title">{label}</div></div>
+      <div className="team-list">
+        {rows.map(([title, meta], i) => (
+          <div key={i} className="team-name">
+            <span className="team-name__inner">{title} <small>{meta}</small></span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function About() {
   const ref = useRef(null)
@@ -69,7 +106,7 @@ export default function About() {
         <div className="about-intro">
           <div className="tag-label">( The Developer )</div>
           <p className="about-quote">
-            <TextScramble as="span" text="I build production-ready apps with intent — picking the right tool, shipping the right thing, scaling past the demo." trigger="scroll" />
+            <TextScramble as="span" text="Most of what I know came from building things that were a little beyond me at the time." trigger="scroll" />
           </p>
         </div>
 
@@ -117,7 +154,7 @@ export default function About() {
             ))}
           </div>
         </div>
-        <p className="about-note">Clarity is where engineering meets product. The boring middle of the stack is where most apps are won or lost.</p>
+        <p className="about-note">Right now I'm spending most of my time on the backend and data layer — the parts I find hardest, which is probably why they're the most interesting.</p>
 
         <div className="formes" aria-hidden="true">
           {FORME_SVGS.map((f, i) => (
@@ -125,24 +162,9 @@ export default function About() {
           ))}
         </div>
 
-        <div className="team-block">
-          <div><div className="team-title">Education :</div></div>
-          <div className="team-list">
-            <div className="team-name">Chitkara University, Punjab <small>BE Computer Science · 8.76 CGPA · 2021—2025</small></div>
-            <div className="team-name">Korea University, South Korea <small>Exchange Semester · A Grade · 2022</small></div>
-          </div>
-        </div>
-
-        <div className="team-block" style={{ marginTop: '3rem' }}>
-          <div><div className="team-title">Certifications :</div></div>
-          <div className="team-list">
-            <div className="team-name">Developing Front-End Apps with React <small>IBM</small></div>
-            <div className="team-name">Getting Started with Git and GitHub <small>IBM</small></div>
-            <div className="team-name">Agile Project Management <small>Google</small></div>
-            <div className="team-name">Python for Data Science, AI Development <small>IBM</small></div>
-            <div className="team-name">Software Engineering Specialization <small>HKUST</small></div>
-          </div>
-        </div>
+        <TeamBlock label="Experience :" rows={EXPERIENCE} />
+        <TeamBlock label="Education :" rows={EDUCATION} style={{ marginTop: '3rem' }} />
+        <TeamBlock label="Certifications :" rows={CERTIFICATIONS} style={{ marginTop: '3rem' }} />
       </div>
     </section>
   )

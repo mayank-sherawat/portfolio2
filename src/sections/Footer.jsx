@@ -12,7 +12,7 @@ export default function Footer() {
             <a href="mailto:mayanksherawat21@gmail.com" className="btn btn--light" data-cursor="email">
               <span>drop an email</span><span style={{ marginLeft: 6 }}>@</span>
             </a>
-            <a href="#" className="btn" data-cursor="call">
+            <a href="tel:+917027004234" className="btn" data-cursor="call">
               <span>book a call</span>
               <span className="arrow">
                 <svg viewBox="0 0 14 10" fill="none">
@@ -23,9 +23,11 @@ export default function Footer() {
             </a>
           </div>
           <div className="footer-socials">
-            <a href="#" data-cursor="LKDN">LinkedIn</a>
-            <a href="#" data-cursor="GH">GitHub</a>
-            <a href="#" data-cursor="PORTFOLIO">Portfolio</a>
+            <a href="https://www.linkedin.com/in/mayank-sherawat" target="_blank" rel="noreferrer noopener" data-cursor="linkedin">LinkedIn</a>
+            <a href="https://github.com/mayank-sherawat" target="_blank" rel="noreferrer noopener" data-cursor="github">GitHub</a>
+            <a href="https://babydocritu.com" target="_blank" rel="noreferrer noopener" data-cursor="live">BabyDoc</a>
+            <a href="https://www.socialhouse.online" target="_blank" rel="noreferrer noopener" data-cursor="live">SocialHouse</a>
+            <a href="/Mayank_Sherawat_Resume.pdf" target="_blank" rel="noreferrer noopener" data-cursor="resume">Resume ↓</a>
           </div>
         </div>
         <div className="footer-wordmark">
