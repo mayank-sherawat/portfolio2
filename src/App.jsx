@@ -22,7 +22,6 @@ import Footer from './sections/Footer.jsx'
 
 import { useSmoothScroll } from './hooks/useSmoothScroll.js'
 import './App.css'
-import './components/ui/ProjectMockup.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
