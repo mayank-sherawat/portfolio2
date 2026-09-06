@@ -12,7 +12,6 @@ import ErrorBoundary from './sections/ErrorBoundary.jsx'
 import Loader from './sections/Loader.jsx'
 import Nav from './sections/Nav.jsx'
 import Hero from './sections/Hero.jsx'
-import Showreel from './sections/Showreel.jsx'
 import Works from './sections/Works.jsx'
 import Now from './sections/Now.jsx'
 import Stats from './sections/Stats.jsx'
@@ -44,7 +43,7 @@ export default function App() {
           scrollTrigger: { trigger: '.about', start: 'top bottom', end: 'bottom top', scrub: true }
         })
       })
-      gsap.utils.toArray('.showreel-headline, .about-h2, .now-title, .glitch-final, .footer-h').forEach(el => {
+      gsap.utils.toArray('.about-h2, .now-title, .glitch-final, .footer-h').forEach(el => {
         gsap.from(el, {
           clipPath: 'inset(0 0 100% 0)',
           duration: 1.1, ease: 'power4.out',
@@ -100,7 +99,6 @@ export default function App() {
       <main>
         <Hero />
         <Marquee items={STACK} duration={40} className="marquee--outline" />
-        <Showreel />
         <Works onOpenCase={setActiveCase} />
         <Marquee items={SERVICES} duration={50} />
         <Now />
