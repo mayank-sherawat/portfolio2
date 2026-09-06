@@ -3,15 +3,8 @@
    ==================================================================== */
 
 /* --- shared atoms --- */
-.section { padding: 8rem 2rem; position: relative; }
 .container { max-width: 1400px; margin: 0 auto; }
-.balance { text-wrap: balance; }
 .tag-label { display: inline-block; font-size: 12px; color: #888; letter-spacing: 0.05em; text-transform: lowercase; }
-.h1 { font-size: clamp(2.8rem, 7vw, 7rem); }
-.h2 { font-size: clamp(1.6rem, 3vw, 2.6rem); }
-.p-lead { font-size: clamp(1rem, 1.4vw, 1.2rem); line-height: 1.45; max-width: 38ch; color: #c5c5c5; }
-
-.scramble-line { display: inline; font-family: 'Big Shoulders Display', sans-serif; }
 
 /* --- buttons --- */
 .btn {
@@ -35,40 +28,165 @@
 /* --- nav --- */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 1.5rem 2rem;
+  /* vertical padding is deliberately tighter than the horizontal: it sets the
+     glass island's height, and the pill padding on .nav-item already adds to
+     it. Horizontal stays 2rem to keep the labels on the hero's spine. */
+  padding: 1rem 2rem;
   display: flex; align-items: center; justify-content: space-between;
   mix-blend-mode: difference;
   color: #f5f5f5;
+  /* multiplier on every nav font size — Nav.jsx scrubs it from HERO_NAV_SCALE
+     down to 1 as the hero scrolls away. 1 is the resting value, so the nav is
+     correct with no JS (reduced motion never creates the tween). */
+  --nav-scale: 1;
+  /* 0 -> 1 glass reveal, also scrubbed by Nav.jsx. GSAP cannot target a
+     pseudo-element, so the scrub drives this variable and ::before reads it. */
+  --nav-glass: 0;
 }
-.nav-logo {
+/* The glass is a floating inset panel, not the .nav box itself — that is what
+   lets it have corners at all (a full-bleed bar can only round its bottom two)
+   and it means the labels never move when the glass arrives: .nav keeps its
+   layout, the panel just fades in behind. z-index: -1 keeps it under the
+   labels; .nav is a fixed, z-indexed stacking context, so -1 stays inside it
+   rather than dropping behind the page. */
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: 6px 8px;
+  z-index: -1;
+  border-radius: 100px;
+  border: 1px solid rgba(245, 245, 245, .1);
+  background-color: rgba(12, 12, 12, .45);
+  /* brightness() is the part that makes this survive the WORKS letters and the
+     footer wordmark: blur alone smears solid white type into a band brighter
+     than the labels on top of it. Darkening the backdrop caps how light it can
+     get, which is what iOS dark materials do — blur AND darken, not blur. */
+  -webkit-backdrop-filter: blur(22px) saturate(140%) brightness(.55);
+          backdrop-filter: blur(22px) saturate(140%) brightness(.55);
+  pointer-events: none;
+  /* The glass is always built; only its opacity moves. Transitioning
+     backdrop-filter itself does NOT work — Chrome will not interpolate it out
+     of `none`, so the blur snapped in while the tint faded. Cross-fading the
+     whole layer instead progressively blurs the backdrop, and opacity is one
+     of the two properties the compositor animates for free.
+     No transition here on purpose: the value is scrubbed frame by frame from
+     the scroll position, and a transition would lag behind and fight it. */
+  opacity: var(--nav-glass);
+  /* deliberately NO will-change here: it would pin a live 22px-blur
+     compositor layer for the whole page, including the hero, where this layer
+     is invisible and the WebGL fluid already owns the GPU. At opacity 0 the
+     browser can skip the subtree entirely — let it. */
+}
+/* Past the hero the nav has to carry its own contrast. `difference` inverts it
+   per-pixel against whatever is behind, which works over the fluid (large,
+   smooth areas) but shreds the labels over the huge WORKS letters and the
+   footer wordmark.
+   The blend MUST come off in the same rule that reveals the glass — left on,
+   difference would invert the tint and wash the nav light. It is the one part
+   of this that cannot be eased: mix-blend-mode is not animatable. That is
+   fine only because the toggle fires while the nav is still over the hero's
+   dark lower edge, where difference and normal render near-identically; the
+   glass itself is what fades (see .nav::before).
+   Verified: with the filter now permanent on ::before, the hero blend still
+   inverts correctly over light backdrops — at opacity 0 that layer
+   contributes nothing to the blend group. */
+.nav.is-solid { mix-blend-mode: normal; }
+/* Reduced motion never gets the scrub, so --nav-glass stays 0 and the labels
+   would sit on raw display type. Snap the glass on with the class instead.
+   This MUST stay inside the media query: .nav.is-solid::before outranks the
+   variable rule, so unconditionally it would pin the glass at 1 and defeat
+   the scrub for everyone. */
+@media (prefers-reduced-motion: reduce) {
+  .nav.is-solid::before { opacity: 1; }
+}
+/* no blur support (older Firefox): fall back to a near-opaque panel, since the
+   .45 tint alone would leave the labels sitting on raw display type */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav::before { background-color: rgba(12, 12, 12, .92); }
+}
+/* socials sit where the logo used to — top-left of the fixed nav row.
+   Both nav groups run on the display face (condensed 800, uppercase, tracked)
+   so the row reads as a masthead rather than as body copy. The mono survives
+   only in the slash separators — that contrast is the point, so don't put the
+   separators on the display face too. Nav type scales with the viewport so it
+   holds its proportion against the hero's vw-based lead and serif. */
+.nav-socials { display: flex; align-items: center; gap: 0.5rem; flex-wrap: nowrap; }
+.nav-menu { display: flex; align-items: center; gap: 1.5rem; }
+/* The pill padding would push the first and last label inward, off the spine
+   the hero text and terminal align to. Pull the outer items back by exactly
+   that padding so the *text* stays flush. This has to sit on the items, not
+   on the groups: `em` here resolves against the item's own font-size, which is
+   what the padding uses — on the group it would resolve against the inherited
+   body size and cancel only approximately. */
+.nav-socials .nav-item:first-child { margin-left: -0.6em; }
+.nav-menu .nav-item:last-child { margin-right: -0.6em; }
+.nav-socials__sep {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 300;
+  font-size: calc(clamp(11px, 0.95vw, 0.95rem) * var(--nav-scale));
+  color: #4d4d4d;
+}
+.nav-item {
   font-family: 'Big Shoulders Display', sans-serif;
-  font-weight: 900; font-size: 1.6rem;
-  letter-spacing: -0.02em; line-height: 1;
+  font-weight: 800;
+  font-size: calc(clamp(15px, 1.35vw, 1.35rem) * var(--nav-scale));
   text-transform: uppercase;
-  background: linear-gradient(135deg, #f5f5f5 0%, #f5f5f5 50%, #888888 50%, #ffffff 100%);
-  background-size: 200% 100%;
-  background-position: 0 0;
-  -webkit-background-clip: text;
-          background-clip: text;
-  color: transparent;
-  transition: background-position .5s cubic-bezier(.65,0,.35,1);
+  letter-spacing: 0.075em;
+  /* padding is in em so the pill grows with --nav-scale for free */
+  display: block;
+  position: relative;
+  padding: 0.32em 0.6em;
+  border-radius: 100px;
 }
-.nav-logo:hover { background-position: -100% 0; }
-.nav-menu { display: flex; align-items: center; gap: 2.5rem; }
-.nav-link { font-size: 13px; text-transform: lowercase; position: relative; padding: 4px 0; }
-.nav-link::before {
-  content: ''; position: absolute; left: 0; right: 0; bottom: 0;
-  height: 1px; background: currentColor;
-  transform: scaleX(0); transform-origin: right;
-  transition: transform .35s cubic-bezier(.65,0,.35,1);
+/* iOS-style hover: a soft pill settles in behind the label. Overshoot easing
+   on the scale is what makes it feel like a UIKit highlight rather than a
+   plain fade. It is a pseudo-element so it can sit under the text without
+   another wrapper, and pointer-events: none keeps it out of hit testing. */
+.nav-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: rgba(245, 245, 245, .14);
+  opacity: 0;
+  transform: scale(.86);
+  pointer-events: none;
+  transition: opacity .28s ease, transform .28s cubic-bezier(.34, 1.4, .64, 1);
 }
-.nav-link:hover::before { transform: scaleX(1); transform-origin: left; }
+.nav-item:hover::before,
+.nav-item:focus-visible::before { opacity: 1; transform: scale(1); }
+/* The clip window is exactly one line tall. The explicit height is what makes
+   overflow: hidden bite — a block box otherwise grows to fit both stacked
+   copies and clips nothing. It lives here rather than on .nav-item because
+   .nav-item now has padding and a pill of its own to draw. */
+.nav-item__win {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 1.2em;
+}
+/* hover slides the label up and an identical copy takes its place — two
+   stacked lines translated by half their own height */
+.nav-item__roll {
+  display: flex; flex-direction: column;
+  transition: transform .5s cubic-bezier(.65,0,.35,1);
+  will-change: transform;
+}
+.nav-item__t { display: block; line-height: 1.2; }
+.nav-item:hover .nav-item__roll,
+.nav-item:focus-visible .nav-item__roll { transform: translateY(-50%); }
+@media (prefers-reduced-motion: reduce) {
+  .nav-item__roll,
+  .nav-item::before { transition: none; }
+}
 .nav-burger { display: none; }
 @media (max-width: 767px) {
   .nav-menu { display: none; }
   .nav-burger {
     display: flex; align-items: center; gap: 8px;
-    font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 800; font-size: 17px;
+    text-transform: uppercase; letter-spacing: 0.075em;
   }
   .burger-svg { width: 12px; height: 12px; }
 }
@@ -90,12 +208,14 @@
 .menu-overlay .menu-cta { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: auto; }
 
 /* ====================================================================
-   HERO  —  multi-layer parallax
+   HERO  —  one statement in two voices
+   A centred mono lead hands off at the dash to a large indented serif.
+   --hero-indent is the offset that makes the mixed alignment read as a
+   deliberate step rather than a mistake.
    ==================================================================== */
 .hero {
-  min-height: 100vh;
-  padding: 0 2rem;
-  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 100svh;
+  display: flex; flex-direction: column;
   position: relative; overflow: hidden;
   isolation: isolate;
   background:
@@ -103,141 +223,77 @@
     radial-gradient(ellipse 40% 30% at 80% 20%, rgba(255,255,255,.02) 0%, transparent 70%),
     #0c0c0c;
 }
+/* Statement left, live terminal right.
+   .hero-grid is `position: relative` with NO z-index on purpose: a z-index
+   here would make it an isolated group and .hero-col's difference blend would
+   have nothing to blend against (white text on white fluid = invisible).
+   Positioned + later in DOM is enough to paint above the canvas. */
 .hero-grid {
-  position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(2rem, 4.5vw, 5rem);
+  align-content: center;
+  align-items: center;
+  padding: 5.5rem 2rem 2rem;
+  position: relative;
 }
-.hero-grid__line {
-  border-left: 1px solid #1a1a1a;
-  height: 100%;
+.hero-col {
+  min-width: 0;
+  position: relative;
+  mix-blend-mode: difference;
 }
-.hero-grid .hero-grid__line:last-child { border-right: 1px solid #1a1a1a; }
+/* right-aligned: when max-height clamps the square, aspect-ratio shrinks the
+   width too, so without this the box would float off the right margin */
+.hero-terminal { min-width: 0; justify-self: end; width: 100%; display: flex; justify-content: flex-end; }
+/* Near-square, a touch wider than tall. The body has to stretch rather than
+   size to its content, so it becomes a flex column and the scroll area takes
+   the remaining height under the title bar. max-height keeps it from
+   outgrowing short windows (it flattens further instead). */
+.hero-terminal .terminal-live {
+  display: flex; flex-direction: column;
+  aspect-ratio: 1.35 / 1;
+  width: 100%;
+  max-height: min(70svh, 660px);
+}
+.hero-terminal .terminal-body {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+}
 
-.hero-top { padding-top: 8rem; max-width: 360px; position: relative; z-index: 2; mix-blend-mode: difference; }
-.hero-tagline {
+.hero-statement { margin: 0; font-weight: 400; }
+.hero-statement__lead {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 400;
+  font-size: clamp(14px, 1.75vw, 1.75rem);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: #f5f5f5;
+}
+.hero-statement__body {
+  display: block;
+  margin-top: clamp(2rem, 11svh, 7rem);
+  /* the column is narrower than this at most sizes, so the column governs the
+     measure and the quote runs to three lines — which is what fills the height */
+  max-width: 34ch;
   font-family: 'Instrument Serif', serif;
   font-style: italic;
-  font-size: clamp(1.3rem, 1.9vw, 1.7rem);
-  line-height: 1.3;
+  font-size: clamp(2rem, 4.6vw, 5rem);
+  line-height: 1.1;
   color: #f5f5f5;
 }
-.hero-cta { margin-top: 1.5rem; }
-.hero-wordmark {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 1rem 0; width: 100%;
-  position: relative; z-index: 1;
-  mix-blend-mode: difference;
-}
-.hero-layer {
-  position: absolute;
-  inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform .5s cubic-bezier(.2,.8,.2,1);
-  will-change: transform;
-}
-.hero-layer--main  { z-index: 3; }
-.hero-layer--slow  { z-index: 2; pointer-events: none; }
-.hero-layer--fast  { z-index: 4; pointer-events: none; opacity: 0; }
-.hero-wordmark-text {
-  font-family: 'Big Shoulders Display', sans-serif;
-  font-weight: 900;
-  font-size: clamp(3.2rem, 24vw, 24rem);
-  letter-spacing: -0.05em;
-  line-height: 0.82;
-  text-transform: uppercase;
-  color: #f5f5f5;
-  text-align: center;
-  width: 100%;
-  margin: 0;
-}
-.hero-wordmark-text.outline {
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(245, 245, 245, 0.4);
-}
-.hero-glyph {
-  font-family: 'Big Shoulders Display', sans-serif;
-  font-weight: 900;
-  font-size: clamp(2rem, 7vw, 7rem);
-  color: #f5f5f5;
-  opacity: .25;
-  letter-spacing: -.04em;
-}
-.hero-bottom {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  padding-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
-  font-size: 12px; color: #888;
-  position: relative; z-index: 4;
-  mix-blend-mode: difference;
-}
-
-/* the 3d canvas sits behind everything in the hero */
-.hero--white { background-color: #ffffff; color: #0c0c0c; }
-.hero--white .hero-tagline, .hero--white .hero-wordmark-text { color: #0c0c0c; }
-.hero--white .hero-wordmark-text.outline { color: transparent; -webkit-text-stroke: 1.5px rgba(12, 12, 12, 0.2); }
-.hero--white .hero-glyph { color: #0c0c0c; opacity: 0.15; }
-.hero--white .hero-grid__line { border-color: #f0f0f0; }
-.hero--white .hero-grid .hero-grid__line:last-child { border-right-color: #f0f0f0; }
-.hero--white .hero-bottom { color: #666; }
-.hero--white .btn { color: #0c0c0c; border-color: #0c0c0c; }
-.hero--white .btn:hover { background: #0c0c0c; color: #ffffff; }
-
-.hero-3d {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-.hero-3d canvas { display: block; }
-
-/* CSS-only fallback if Three.js fails to load or WebGL is unavailable */
-.hero-3d-fallback {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  display: flex; align-items: center; justify-content: center;
-  perspective: 1200px;
-}
-.hero-3d-orbit {
-  position: absolute;
-  width: 480px; height: 480px;
-  border: 1px solid rgba(245,245,245,.18);
-  border-radius: 50%;
-  transform-style: preserve-3d;
-  animation: orbit-spin 24s linear infinite;
-}
-.hero-3d-orbit--mid   { width: 320px; height: 320px; animation-duration: 18s; animation-direction: reverse; border-color: rgba(245,245,245,.25); }
-.hero-3d-orbit--inner { width: 180px; height: 180px; animation-duration: 12s; border-color: rgba(245,245,245,.35); }
-@keyframes orbit-spin { to { transform: rotate(360deg); } }
-.hero-socials { display: flex; gap: 1.2rem; align-items: center; }
-.hero-socials a { position: relative; }
-.hero-socials a::before {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -2px;
-  height: 1px; background: currentColor;
-  transform: scaleX(0); transform-origin: right;
-  transition: transform .35s cubic-bezier(.65,0,.35,1);
-}
-.hero-socials a:hover::before { transform: scaleX(1); transform-origin: left; }
-
-/* --- showreel --- */
-.showreel { padding: 12rem 2rem 6rem; }
-.showreel-headline {
-  font-size: clamp(2.5rem, 8vw, 8.5rem);
-  max-width: 18ch;
-}
-.showreel-body {
-  margin-top: 4rem;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
-  align-items: start;
-}
-@media (max-width: 767px) { .showreel-body { grid-template-columns: 1fr; } }
-.showreel-tag { color: #888; font-size: 12px; margin-bottom: 1rem; }
-.showreel-text { font-size: clamp(1rem, 1.4vw, 1.2rem); line-height: 1.5; color: #d0d0d0; max-width: 42ch; }
+/* inside .hero-col, which already blends — don't nest another blend context */
+.hero-cta { margin-top: clamp(1.75rem, 8svh, 5rem); }
 
 /* ====================================================================
    WORKS  —  3D tilt + shine
    ==================================================================== */
-.works { padding: 6rem 2rem; }
+/* bottom padding is small: .build follows and centres itself in a full
+   screen, so its own leading whitespace supplies the separation */
+.works { padding: 6rem 2rem 2rem; }
 .works-letters {
   display: flex; align-items: flex-end; gap: 0.4rem;
   font-family: 'Big Shoulders Display', sans-serif;
@@ -256,13 +312,15 @@
 }
 @media (max-width: 767px) { .works-grid { grid-template-columns: 1fr; } }
 
+/* The card is two stacked zones — .work-text, then .work-stage taking the
+   rest — so copy and artwork never share pixels. Padding lives on the zones,
+   not on the card, because the artwork has to reach the card's bottom edge. */
 .work-card--tilt {
   position: relative;
   aspect-ratio: 4/5;
   background: #131313;
   border: 1px solid #1f1f1f;
-  padding: 2rem;
-  display: flex; flex-direction: column; justify-content: space-between;
+  display: flex; flex-direction: column;
   overflow: hidden;
   transition: border-color .4s, background .4s, box-shadow .4s;
   transform-style: preserve-3d;
@@ -273,7 +331,36 @@
   background: #161616;
   box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
 }
-.work-card--wide { grid-column: 1 / -1; aspect-ratio: 16/9; }
+.work-text {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+  padding: 2rem 2rem 1.5rem;
+}
+/* min-height: 0 so a tall frame inside cannot push the text zone around;
+   the frame is clipped by the card's overflow instead */
+.work-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+/* The wide card has the width to run the two zones side by side instead of
+   stacked — at full bleed a stacked artwork zone is a 3:1 letterbox. */
+/* 21/9, not 16/9: the frame is sized off the card's height, and at 16/9 the
+   drawn timeline mock stretched to ~700px tall with its lower half empty
+   white. Shorter card, denser app screen. */
+.work-card--wide { grid-column: 1 / -1; aspect-ratio: 21/9; flex-direction: row; }
+/* centred, not top-aligned: the copy is far shorter than the card is tall, and
+   top-aligning it leaves a hole under the tags instead of even margins */
+.work-card--wide .work-text {
+  width: 38%;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 2rem;
+}
+@media (max-width: 767px) {
+  .work-card--wide { flex-direction: column; aspect-ratio: 4/5; }
+  .work-card--wide .work-text { width: auto; justify-content: flex-start; }
+}
 
 /* monochrome border styles per project */
 .work-card--cyan,
@@ -291,72 +378,80 @@
 }
 .work-card--tilt:hover .work-card__shine { opacity: 1; }
 
-/* the mockup sits behind everything else in the card */
-.work-card__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  display: flex; align-items: center; justify-content: center;
+/* The artwork grows from the bottom edge on hover. transform-origin matters:
+   scaling from the centre would lift the frame off the card's bottom edge and
+   expose the gap it is meant to be flush against. */
+.work-stage .mock {
   transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  transform-origin: bottom center;
 }
-.work-card--wide .work-card__bg { justify-content: center; }
-.work-card--tilt:hover .work-card__bg { transform: scale(1.04); }
+.work-card--tilt:hover .work-stage .mock { transform: scale(1.03); }
+@media (prefers-reduced-motion: reduce) {
+  .work-stage .mock { transition: none; }
+}
 
-/* dark gradient so text on top stays readable */
-.work-card__overlay {
-  position: absolute; inset: 0;
-  background:
-    linear-gradient(180deg, rgba(12,12,12,.4) 0%, rgba(12,12,12,.5) 35%, rgba(12,12,12,.85) 75%, rgba(12,12,12,.95) 100%);
-  z-index: 1;
-  pointer-events: none;
+.work-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem;
 }
-.work-card .work-content { position: relative; z-index: 2; }
 .work-num { font-size: 11px; color: #777; letter-spacing: 0.1em; }
 .work-title {
   font-size: clamp(2.2rem, 4.5vw, 4rem);
   line-height: 0.9; letter-spacing: -0.03em;
 }
-.work-desc { color: #b5b5b5; font-size: 14px; max-width: 30ch; margin-top: 0.6rem; }
-.work-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; position: relative; z-index: 2; }
-.work-tags { display: flex; flex-wrap: wrap; gap: 6px; max-width: 60%; }
+/* min-height is 5 lines of the 14px/1.5 body — it holds the two side-by-side
+   cards' text zones to the same height so their artwork starts on one line.
+   px, not rem: the font-size it is derived from is px too. */
+.work-desc {
+  color: #b5b5b5; font-size: 14px; max-width: 34ch; margin-top: 0.6rem;
+  min-height: 105px;
+}
+@media (max-width: 767px) { .work-desc { min-height: 0; } }
+.work-foot {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.work-tags { display: flex; flex-wrap: wrap; gap: 6px; max-width: 70%; }
+/* no backdrop-filter any more — the tags sit on the card, not on the artwork,
+   so blurring behind them buys nothing and pins a compositor layer per tag */
 .work-tag {
   font-size: 10px; letter-spacing: 0.05em;
   padding: 4px 8px; border: 1px solid #2a2a2a;
   border-radius: 100px; color: #999; text-transform: uppercase;
-  background: rgba(12,12,12,.6);
-  backdrop-filter: blur(4px);
 }
 .work-year { font-size: 11px; color: #777; white-space: nowrap; }
+/* a standing affordance now, not a hover-only reveal: nothing else on the card
+   said it opened a case study */
 .work-explore {
-  position: absolute; right: 2rem; top: 50%;
-  transform: translate(20px, -50%);
   display: flex; align-items: center; gap: 8px;
-  font-size: 12px; color: #f5f5f5;
-  opacity: 0; transition: opacity .4s, transform .4s;
-  z-index: 3;
+  font-size: 11px; color: #777;
+  white-space: nowrap;
+  transition: color .35s;
 }
-.work-card--tilt:hover .work-explore { opacity: 1; transform: translate(0, -50%); }
-.works-meta {
-  margin-top: 4rem;
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 12px; color: #777;
+/* the arrow slides on transform, not on the flex `gap` — animating gap
+   relayouts the row every frame for a 4px nudge */
+.work-explore svg {
+  width: 14px; height: 10px;
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1);
 }
-.works-meta .count { display: flex; gap: 4px; }
+.work-card--tilt:hover .work-explore { color: #f5f5f5; }
+.work-card--tilt:hover .work-explore svg { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) {
+  .work-explore, .work-explore svg { transition: none; }
+}
 
 /* ====================================================================
    NOW  —  working terminal
    ==================================================================== */
-.now { padding: 6rem 2rem; }
-.now-headline { text-align: center; margin-bottom: 3rem; }
+.now { padding: 8rem 2rem; }
+.now-headline { text-align: center; }
 .now-headline .now-label {
   display: block; font-size: 11px; color: #777;
   letter-spacing: 0.1em; margin-bottom: 1rem;
 }
 .now-headline .now-title { font-size: clamp(2.5rem, 7vw, 7rem); line-height: 0.95; }
 .now-headline .now-sub { margin-top: 1rem; color: #999; font-size: 13px; }
-
-.now-frame { max-width: 900px; margin: 0 auto; }
 
 /* ====================================================================
    STATS  —  animated counters
@@ -430,23 +525,6 @@
   gap: 0 2.5rem;
 }
 @media (max-width: 479px) { .radial-grid { grid-template-columns: 1fr; } }
-.skills-list { list-style: none; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem 2rem; }
-@media (max-width: 479px) { .skills-list { grid-template-columns: 1fr; } }
-.skill-item {
-  display: flex; align-items: center; gap: 12px;
-  font-size: clamp(1rem, 1.6vw, 1.4rem);
-  padding: 12px 0;
-  border-top: 1px solid #1f1f1f;
-  transition: transform .3s, color .3s;
-}
-.skill-item:hover { transform: translateX(8px); color: #f5f5f5; }
-.skill-item::before {
-  content: ''; width: 8px; height: 8px;
-  border-radius: 50%; background: #f5f5f5; flex-shrink: 0;
-  transition: transform .3s;
-}
-.skill-item:hover::before { transform: scale(1.5); }
-.skill-item small { display: block; color: #777; font-size: 11px; margin-top: 2px; }
 .about-note { margin-top: 2rem; max-width: 50ch; color: #999; font-size: 13px; }
 
 .formes { position: relative; margin: 6rem auto 0; max-width: 1100px; height: 320px; }
@@ -469,9 +547,21 @@
   padding: 14px 0;
   border-top: 1px solid #1f1f1f;
   font-size: clamp(1rem, 1.4vw, 1.2rem);
-  transition: padding-left .3s, color .3s;
+  transition: color .3s;
 }
-.team-name:hover { padding-left: 12px; color: #f5f5f5; }
+/* The nudge rides on the inner span's transform rather than the row's
+   padding-left: animating padding relayouts the grid row on every frame, and
+   translating .team-name itself would carry its border-top out of alignment
+   with the rows above and below. */
+.team-name__inner {
+  display: block;
+  transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+}
+.team-name:hover { color: #f5f5f5; }
+.team-name:hover .team-name__inner { transform: translateX(12px); }
+@media (prefers-reduced-motion: reduce) {
+  .team-name__inner { transition: none; }
+}
 .team-name small { display: block; color: #777; font-size: 11px; margin-top: 2px; }
 
 /* --- glitch --- */
@@ -509,11 +599,18 @@
 }
 .glitch-img svg { width: 70%; height: auto; }
 
-/* --- footer --- */
-footer { padding: 6rem 2rem 2rem; background: #0c0c0c; border-top: 1px solid #1a1a1a; }
+/* --- footer ---
+   The footer has to FIT THE VIEWPORT. It is the last thing on the page, so at
+   max scroll its top sits at (viewport - footer height); once the footer is
+   taller than the screen that goes negative and the fixed nav eats the top of
+   the CTA heading. Measured at 1365x605 it was 651px tall, putting its top at
+   -46px and hiding 25px of "Let's start from zero." behind the nav.
+   padding-top is the clearance that keeps the heading below the nav once the
+   footer does fit — don't cut it without re-measuring. */
+footer { padding: 4.5rem 2rem 1.5rem; background: #0c0c0c; border-top: 1px solid #1a1a1a; }
 .footer-h { font-size: clamp(2.5rem, 7vw, 6.5rem); }
 .footer-cta { margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; }
-.footer-socials { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.footer-socials { display: flex; gap: 1.5rem; margin-top: 1.2rem; flex-wrap: wrap; }
 .footer-socials a { font-size: 14px; position: relative; }
 .footer-socials a::before {
   content: ''; position: absolute; left: 0; right: 0; bottom: -2px;
@@ -523,12 +620,21 @@ footer { padding: 6rem 2rem 2rem; background: #0c0c0c; border-top: 1px solid #1a
 }
 .footer-socials a:hover::before { transform: scaleX(1); transform-origin: left; }
 
-.footer-wordmark { margin-top: 5rem; width: 100%; overflow: hidden; }
+.footer-wordmark { margin-top: 1.5rem; width: 100%; overflow: hidden; }
 .footer-wordmark-text {
   font-family: 'Big Shoulders Display', sans-serif;
   font-weight: 900;
-  font-size: clamp(3.2rem, 22vw, 22rem);
+  /* Capped by viewport HEIGHT as well as width. Sized on vw alone, a wide but
+     short window (1365x540) made the wordmark tall enough to push the footer
+     past the viewport, which puts the CTA heading back under the fixed nav.
+     min() keeps it continuous instead of stacking max-height breakpoints. */
+  font-size: clamp(2.6rem, min(22vw, 34vh), 22rem);
   letter-spacing: -0.05em; line-height: 0.85;
+  /* line-height below 1 pulls the line box inside the em box, so the glyph
+     bottoms spill out and .footer-wordmark's overflow:hidden sliced them off
+     flat. This padding gives that overhang somewhere to live. em, so it tracks
+     the font-size. */
+  padding-bottom: 0.09em;
   text-transform: uppercase;
   background: linear-gradient(180deg, #f5f5f5 0%, #f5f5f5 60%, #2a2a2a 100%);
   -webkit-background-clip: text;
@@ -538,7 +644,7 @@ footer { padding: 6rem 2rem 2rem; background: #0c0c0c; border-top: 1px solid #1a
 }
 
 .footer-info {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
   gap: 0.5rem;
   font-size: 11px; color: #888;
@@ -552,23 +658,44 @@ footer { padding: 6rem 2rem 2rem; background: #0c0c0c; border-top: 1px solid #1a
 }
 .footer-info a:hover::before { transform: scaleX(1); transform-origin: left; }
 
+/* Short windows: the wordmark is the only part big enough to push the footer
+   past the viewport again, so it is what gives. */
+@media (max-height: 640px) {
+  footer { padding: 3.5rem 2rem 1.2rem; }
+  .footer-cta { margin-top: 1.2rem; }
+}
+/* Very short windows. Only the wordmark is trimmed here, never footer padding:
+   padding-top is what holds the heading below the nav, so cutting it takes back
+   most of what shrinking the footer gains. */
+@media (max-height: 560px) {
+  .footer-wordmark { margin-top: 0.8rem; }
+  .footer-wordmark-text { font-size: clamp(2.2rem, min(22vw, 26vh), 22rem); }
+}
+
 /* --- mobile --- */
 @media (max-width: 767px) {
-  .section { padding: 5rem 1.2rem; }
   .nav { padding: 1rem 1.2rem; }
-  .showreel { padding: 6rem 1.2rem 4rem; }
-  .works { padding: 4rem 1.2rem; }
-  .hero { padding: 0 1.2rem; }
-  .hero-top { padding-top: 6rem; }
-  .hero-bottom { font-size: 11px; }
+  .works { padding: 4rem 1.2rem 1.5rem; }
+  /* stack: statement first, terminal under it */
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 6.5rem 1.2rem 1.5rem;
+  }
+  .hero-statement__body { max-width: 20ch; }
+  /* stacked, a full-width square would eat the screen — cap it */
+  .hero-terminal .terminal-live { max-height: 44svh; }
 }
 @media (max-width: 479px) {
-  .section { padding: 4rem 1rem; }
-  .showreel { padding: 4rem 1rem 3rem; }
-  .works { padding: 3rem 1rem; }
-  .hero-bottom { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .works { padding: 3rem 1rem 1rem; }
+  .hero-grid { padding: 6rem 1rem 1.25rem; }
   .footer-info { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .formes { display: none; }
+  /* four socials plus the burger do not fit at phone widths otherwise */
+  .nav { padding: 1rem; }
+  .nav-socials { gap: 0.6rem; }
+  .nav-socials .nav-item { font-size: 13px; letter-spacing: 0.05em; }
+  .nav-socials__sep { display: none; }
 }
 
 /* --- loader --- */
@@ -610,3 +737,135 @@ footer { padding: 6rem 2rem 2rem; background: #0c0c0c; border-top: 1px solid #1a
   font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #777;
   letter-spacing: 0.1em;
 }
+
+/* ====================================================================
+   BUILD  —  stacking sticky rows
+   No JavaScript. Each row is about a screen tall with its content always
+   expanded, and its header is position: sticky at an offset staggered by one
+   header height (--i, set inline by Build.jsx). Scrolling parks header 01 under
+   the nav while its content passes, then 02 comes to rest beneath it, then 03.
+   Because a row is a screenful, the next row's header sits below the fold while
+   you are reading the current one — which is the behaviour the reference has
+   and the reason nothing here animates.
+   ==================================================================== */
+.build {
+  padding: 6rem 2rem 0;
+  /* ONE type scale for the section, every size a multiple of it. Ratios are
+     measured off grigoletti.ch at 1400px wide: heading 100px, row number and
+     title 64px, sub-item label 32px, description 20px — i.e. 7u / 4.6u / 2.3u /
+     1.4u at u = 14px. The 10px floor is for phones, where 1vw is far too small
+     a driver; the vh term keeps a row inside a screen on short windows. */
+  --u: clamp(10px, min(1vw, 2vh), 22px);
+  /* one header's height: its padding plus one line of the title */
+  --head-h: calc(var(--u) * 5.9 + 1px);
+  /* where the first header comes to rest — clear of the fixed nav */
+  --stick: 4.6rem;
+}
+
+.build__heading {
+  font-size: calc(var(--u) * 7);
+  line-height: 0.8;
+  color: #f5f5f5;
+  margin-bottom: calc(var(--u) * 2.4);
+}
+
+/* Trailing room so the LAST row gets a turn. Sticky is bounded by the
+   containing block's CONTENT box, so this has to be a real element — padding on
+   the list buys nothing. Nothing empty shows: once row 03 is parked its opaque
+   background covers the rest of the viewport and the spacer sits behind it. */
+.build__tail { height: 62svh; }
+
+/* THE ROW is what sticks, not the header. Sticking the header alone only keeps
+   it up while its own row is in view — measured, header 01 unstuck and left the
+   screen the moment row 02 arrived, instead of staying put beneath the nav.
+
+   Sticking the whole row instead gives the stacking-card behaviour the
+   reference has: row 01 parks at --stick, then row 02 parks one header-height
+   lower and its opaque background covers row 01's content, leaving only row
+   01's header showing above it. Then row 03 does the same over row 02.
+
+   A row is a screenful, so the next row's header is below the fold while you
+   are reading this one, and min-height (not height) lets tall content grow. */
+.build__row {
+  position: sticky;
+  top: calc(var(--stick) + var(--i) * var(--head-h));
+  z-index: var(--i);
+  background: #0c0c0c;
+  /* a full screen, not less: a row parks at --stick, so anything shorter than
+     the viewport leaves the NEXT row's header peeking in below it — measured at
+     86svh, row 02 showed 49px early. 100svh puts it just off the fold. */
+  min-height: 100svh;
+  padding-bottom: calc(var(--u) * 2);
+}
+
+.build__head {
+  background: #0c0c0c;
+  border-top: 1px solid #1f1f1f;
+  display: grid;
+  grid-template-columns: minmax(0, 0.34fr) 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: calc(var(--u) * 1.1) 0;
+  color: #f5f5f5;
+}
+/* Not using .display: the reference keeps these rows in title case ("Design",
+   "Development") and only the section heading is uppercased. */
+.build__num,
+.build__title {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  font-size: calc(var(--u) * 4.6);
+  line-height: 0.8;
+  margin: 0;
+}
+.build__arrow { display: inline-flex; color: #777; }
+.build__arrow svg { width: calc(var(--u) * 1.6); height: calc(var(--u) * 1.6); }
+
+.build__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.34fr) 1fr;
+  gap: 0 1rem;
+  padding-top: calc(var(--u) * 1.8);
+}
+.build__desc {
+  grid-column: 2;
+  max-width: 34ch;
+  margin-bottom: calc(var(--u) * 1.6);
+  color: #999;
+  font-size: calc(var(--u) * 1.4);
+  line-height: 1.3;
+}
+.build__items { grid-column: 2; list-style: none; }
+.build__item {
+  display: grid;
+  grid-template-columns: calc(var(--u) * 4) 1fr;
+  align-items: center;
+  padding: calc(var(--u) * 0.78) 0;
+  border-top: 1px solid #1f1f1f;
+}
+.build__item:first-child { border-top: 0; }
+.build__item-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: calc(var(--u) * 1.15);
+  color: #555;
+}
+.build__item-label {
+  font-family: 'Big Shoulders Display', sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-size: calc(var(--u) * 2.3);
+  line-height: 0.8;
+  color: #f5f5f5;
+}
+
+@media (max-width: 767px) {
+  .build { padding: 4rem 1.2rem 0; }
+  .build__head { grid-template-columns: calc(var(--u) * 4.5) 1fr auto; gap: 0.75rem; }
+  .build__panel { grid-template-columns: 1fr; }
+  .build__desc, .build__items { grid-column: 1; }
+  .build__item { grid-template-columns: calc(var(--u) * 3) 1fr; }
+}
+

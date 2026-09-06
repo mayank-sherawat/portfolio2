@@ -35,9 +35,36 @@ a { color: inherit; text-decoration: none; }
 img, svg, video { display: block; max-width: 100%; }
 button { background: none; border: 0; color: inherit; cursor: pointer; font: inherit; }
 
+/* ====================================================================
+   KEYBOARD FOCUS
+   The custom cursor hides the native one, so keyboard is a real path
+   through this site. :focus-visible keeps the ring off mouse clicks.
+   ==================================================================== */
+:focus-visible {
+  outline: 2px solid #f5f5f5;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+/* pill-shaped controls get a matching ring */
+.btn:focus-visible,
+.nav-item:focus-visible,
+.terminal-chip:focus-visible { outline-offset: 4px; border-radius: 100px; }
+/* the terminal input draws its own block cursor, so ring the whole box
+   instead of the bare input */
+.tl-input:focus-visible { outline: none; }
+.terminal-live:focus-within { border-color: #555; }
+
 /* hide native cursor on desktop — custom cursor takes over */
 @media (min-width: 992px) and (hover: hover) {
   *, *::before, *::after { cursor: none !important; }
+
+  /* …except these, which keep the OS pointer. The hero swaps the custom
+     cursor for the fluid simulation, and the nav is fixed on top of it, so
+     without this there is no pointer feedback at all on the things you can
+     actually click. Cursor.jsx hides the custom cursor over the same
+     selectors so the two never show at once. */
+  .nav a, .nav button, .nav a *, .nav button *,
+  .hero a, .hero button, .hero a *, .hero button * { cursor: pointer !important; }
 }
 
 /* lenis smooth scroll support */
@@ -65,14 +92,3 @@ html { font-size: calc(0rem + 1vw); }
 
 /* font helpers */
 .display { font-family: 'Big Shoulders Display', sans-serif; font-weight: 900; letter-spacing: -0.03em; line-height: 0.85; text-transform: uppercase; }
-.mono { font-family: 'IBM Plex Mono', monospace; }
-
-/* ====================================================================
-   ACCENT COLOR SYSTEM
-   ==================================================================== */
-:root {
-  --accent: #f5f5f5;             /* pure white — primary */
-  --accent-2: #a3a3a3;           /* silver/gray — secondary */
-  --accent-warm: #737373;        /* medium gray */
-  --accent-cool: #525252;        /* dark charcoal */
-}
