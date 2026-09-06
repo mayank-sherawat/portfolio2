@@ -6,7 +6,6 @@ import Cursor from './Cursor.jsx'
 import ScrollProgress from './components/ui/ScrollProgress.jsx'
 import CommandPalette from './components/ui/CommandPalette.jsx'
 import CaseStudyModal from './components/ui/CaseStudyModal.jsx'
-import Marquee from './components/ui/Marquee.jsx'
 
 import ErrorBoundary from './sections/ErrorBoundary.jsx'
 import Loader from './sections/Loader.jsx'
@@ -23,9 +22,6 @@ import { useSmoothScroll } from './hooks/useSmoothScroll.js'
 import './App.css'
 
 gsap.registerPlugin(ScrollTrigger)
-
-const STACK    = ['Next.js', 'React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Prisma', 'Tailwind', 'Vercel', 'Supabase', 'MongoDB', 'Zod', 'NextAuth']
-const SERVICES = ['Brand Identities', 'Campaigns', 'Digital Experiences', 'Events', 'Visual Systems', 'Web Apps', 'AI Integrations', 'Design Systems']
 
 export default function App() {
   const [activeCase, setActiveCase] = useState(null)
@@ -54,14 +50,9 @@ export default function App() {
         scale: 1.4, opacity: 0, duration: 1.2, ease: 'power3.out',
         scrollTrigger: { trigger: '.footer-wordmark', start: 'top 90%' }
       })
-      /* parallax on the marquees — slight depth shift */
-      gsap.utils.toArray('.marquee').forEach((el, i) => {
-        gsap.to(el, {
-          x: i % 2 === 0 ? -80 : 80,
-          ease: 'none',
-          scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true }
-        })
-      })
+      /* The three scrolling word strips that used to sit between these
+         sections were deleted in Sep 2026 — see CLAUDE.md. Nothing replaced
+         them, and their ScrollTrigger went with them. */
     })
     return () => ctx.revert()
   }, [])
@@ -98,12 +89,9 @@ export default function App() {
 
       <main>
         <Hero />
-        <Marquee items={STACK} duration={40} className="marquee--outline" />
         <Works onOpenCase={setActiveCase} />
-        <Marquee items={SERVICES} duration={50} />
         <Now />
         <Stats />
-        <Marquee items={STACK} duration={45} reverse />
         <About />
         <Glitch />
       </main>
