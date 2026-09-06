@@ -44,11 +44,6 @@ export default function App() {
           scrollTrigger: { trigger: '.about', start: 'top bottom', end: 'bottom top', scrub: true }
         })
       })
-      gsap.to('.hero-wordmark-text', {
-        letterSpacing: '-0.08em',
-        ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
-      })
       gsap.utils.toArray('.showreel-headline, .about-h2, .now-title, .glitch-final, .footer-h').forEach(el => {
         gsap.from(el, {
           clipPath: 'inset(0 0 100% 0)',

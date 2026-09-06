@@ -9,6 +9,16 @@
   color: #d0d0d0;
   cursor: text;
 }
+/* index.css forces `cursor: none !important` on everything for the custom
+   cursor, and Cursor.jsx additionally hides itself inside .hero — so without
+   this the terminal would offer no pointer feedback at all. It's a real text
+   input, so give it a real I-beam. */
+@media (min-width: 992px) and (hover: hover) {
+  .terminal-live,
+  .terminal-live *,
+  .terminal-live *::before,
+  .terminal-live *::after { cursor: text !important; }
+}
 .terminal-live .terminal-bar {
   display: flex; align-items: center; gap: 8px;
   padding: 10px 14px;
@@ -37,9 +47,30 @@
 .tl-sep     { height: 6px; }
 .tl-sep hr  { border: 0; border-top: 1px dashed #1a1a1a; margin: 0; }
 
+/* a row of inline segments — key/value pairs and the `$ cmd` echo.
+   pre-wrap keeps the padding spaces that align the value column; plain HTML
+   whitespace collapsing would ragged the colons. */
+.tl-row     { display: block; }
+.tl-row, .tl-key, .tl-val, .tl-muted, .tl-err { white-space: pre-wrap; }
+
+/* real links in the output — dotted underline so they read as clickable
+   without turning the terminal into a wall of blue */
+.tl-link {
+  text-decoration: none;
+  border-bottom: 1px dotted #555;
+  transition: color .2s, border-color .2s;
+}
+.tl-link:hover { color: #f5f5f5; border-bottom-color: #f5f5f5; }
+@media (min-width: 992px) and (hover: hover) {
+  .terminal-live .tl-link { cursor: pointer !important; }
+}
+
 .tl-line    { display: flex; align-items: center; }
 .tl-input {
   flex: 1;
+  /* an input's intrinsic min-width is ~20ch, so without this it refuses to
+     shrink and pushes the terminal wider than its column on narrow screens */
+  min-width: 0;
   background: transparent;
   border: 0; outline: 0;
   color: #f5f5f5;
@@ -56,3 +87,28 @@
   vertical-align: -2px;
 }
 @keyframes blink { 50% { opacity: 0; } }
+
+/* clickable command shortcuts pinned under the prompt */
+.terminal-chips {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px 14px;
+  border-top: 1px solid #1a1a1a;
+  background: #0d0d0d;
+  flex-shrink: 0;
+}
+.terminal-chip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: #8a8a8a;
+  padding: 4px 10px;
+  border: 1px solid #262626;
+  border-radius: 100px;
+  background: transparent;
+  transition: color .22s, border-color .22s, background .22s;
+}
+.terminal-chip:hover { color: #f5f5f5; border-color: #555; background: #151515; }
+/* the cursor:text rule above covers the whole terminal — chips are buttons */
+@media (min-width: 992px) and (hover: hover) {
+  .terminal-live .terminal-chip,
+  .terminal-live .terminal-chip * { cursor: pointer !important; }
+}

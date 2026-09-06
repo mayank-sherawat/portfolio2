@@ -4,11 +4,11 @@ import { gsap } from 'gsap'
 function playIntro() {
   try {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    tl.from('.nav',        { y: -30, opacity: 0, duration: 0.7 }, 0.05)
-      .from('.hero-top',   { y: 30,  opacity: 0, duration: 0.9 }, 0.15)
-      .from('.hero-wordmark', { scale: 0.92, opacity: 0, duration: 1.0 }, 0.25)
-      .from('.hero-bottom',{ y: 20,  opacity: 0, duration: 0.7 }, 0.4)
-      .from('.cmdk-hint',  { y: 20,  opacity: 0, duration: 0.6 }, 0.5)
+    tl.from('.nav',                     { y: -30, opacity: 0, duration: 0.7 }, 0.05)
+      .from('.hero-statement__lead',    { y: 20,  opacity: 0, duration: 0.8 }, 0.15)
+      .from('.hero-statement__body',    { y: 30,  opacity: 0, duration: 1.0 }, 0.3)
+      .from('.hero-cta',                { y: 20,  opacity: 0, duration: 0.7 }, 0.45)
+      .from('.hero-terminal',           { y: 24,  opacity: 0, duration: 0.9 }, 0.35)
   } catch (e) {
     console.warn('[intro skipped]', e)
   }
