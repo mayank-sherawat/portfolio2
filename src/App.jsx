@@ -12,6 +12,7 @@ import Loader from './sections/Loader.jsx'
 import Nav from './sections/Nav.jsx'
 import Hero from './sections/Hero.jsx'
 import Works from './sections/Works.jsx'
+import Build from './sections/Build.jsx'
 import Now from './sections/Now.jsx'
 import Stats from './sections/Stats.jsx'
 import About from './sections/About.jsx'
@@ -90,6 +91,7 @@ export default function App() {
       <main>
         <Hero />
         <Works onOpenCase={setActiveCase} />
+        <Build />
         <Now />
         <Stats />
         <About />
