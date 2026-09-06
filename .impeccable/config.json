@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "instrument serif",
+        "createdAt": "2026-08-31T08:22:06.023Z",
+        "reason": "Claude: not in the rule's own overused list (Inter/Roboto/Fraunces/Geist/Plus Jakarta/Space Grotesk); pre-existing deliberate 3-face system (Big Shoulders Display 900 display + IBM Plex Mono body + Instrument Serif italic) scoped to pull quotes only"
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(.34, 1.4, .64, 1)",
+        "createdAt": "2026-09-03T10:46:55.377Z",
+        "reason": "Claude: user asked for a hover effect 'like iOS' and UIKit spring highlights overshoot by design; codebase already uses cubic-bezier(.34,1.56,.64,1) as house overshoot easing in CaseStudyModal.css, CommandPalette.css and RadialSkill.jsx - this curve is milder (1.4). Scoped to the .nav-item hover pill."
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(.34, 1.56, .64, 1)",
+        "createdAt": "2026-09-06T12:44:43.416Z",
+        "reason": "Pre-existing house pattern, not introduced this session: the same overshoot drives .nav-item::before (App.css:154), .cmdk__panel (CommandPalette.css:21) and .cs__panel. App.css:154 carries an explicit intent comment - 'Overshoot easing on the scale is what makes it feel like a UIKit highlight rather than a plain fade.' Deliberate iOS-material reference, applied consistently."
+      },
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/App.css"
+        ],
+        "createdAt": "2026-09-06T14:08:08.297Z",
+        "reason": "User confirmed ('fix everything', Sep 2026) after I recommended keeping it. The only gradient text in this file is .footer-wordmark-text: the giant MAYANK wordmark fades #f5f5f5 to #2a2a2a top-to-bottom so it dissolves into the page bottom. That is a compositional effect on a display wordmark, not a decorative gradient heading."
+      }
+    ]
+  }
+}
